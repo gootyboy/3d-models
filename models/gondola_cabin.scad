@@ -101,8 +101,8 @@ module cabin_roof() {
             }
             
             // Slotted mounting bracket (clevis) on roof ridge
-            translate([0, 0, roof_h])
-                cube([14.0, 12.0, clevis_h], center = false);
+            translate([0, 6.0, roof_h + clevis_h / 2])
+                cube([14.0, 12.0, clevis_h], center = true);
         }
         
         // Underside recess for cabin rim (goes UPWARDS into the roof from Z = 0 to Z = 2.5, NEVER below Z=0!)
@@ -176,7 +176,7 @@ module hanger_arm_flat() {
 
 // Alias for 3D preview: stands upright
 module hanger_arm() {
-    translate([0, 6.0, 0])
+    translate([0, 6.0 + hanger_th / 2, 0])
         rotate([90, 0, 0])
             hanger_arm_flat();
 }
