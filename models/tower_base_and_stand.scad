@@ -1,22 +1,26 @@
 // ====================================================================
-// Tower Base & Modular Mast (100% 3D-Printable)
+// Tower Base & 3D-Printable Alpine Mast Column (100% Support-Free)
 // 
 // Features:
-// - Wide, stable holiday-styled baseplate (can be clamped, screwed, or weighted)
-// - 20mm upper socket accepts:
-//     Option A: Standard wooden dowel or PVC pipe (custom height)
-//     Option B: Stackable 3D-printed lattice mast segments (provided below)
+// - 110mm Wide, stable holiday-styled baseplate (Z = 0)
+// - 100% 3D-Printable Alpine Tower Mast Column:
+//     * Sits flat on print bed at Z = 0.00 mm
+//     * Lower male plug (20.0mm) drops directly into tower_base socket
+//     * Upper male plug (20.0mm) plugs directly into tower_head_station_a / b
+//     * Stiff cruciform ribbed / fluted pylon withstands high cable tension
+//     * 12mm central hollow channel allows motor wires to pass internally
+//     * Fits easily within FLSUN T1's 330mm vertical build volume
 // ====================================================================
 
-$fn = 40;
+$fn = 50;
 
 base_dia       = 110.0; // Wide footprint for stability against cable tension
 base_th        = 8.0;   // Solid base thickness
-socket_inner_d = 20.4;  // Fits 20mm dowel or lattice mast plug
+socket_inner_d = 20.4;  // Fits 20.0mm mast plug or 20mm/3/4" dowel
 socket_wall    = 4.5;
 socket_h       = 32.0;
 
-// 1. Sturdy Baseplate
+// 1. Sturdy Baseplate (Sits flat at Z = 0)
 module tower_base() {
     difference() {
         union() {
@@ -24,8 +28,7 @@ module tower_base() {
             cylinder(d1 = base_dia, d2 = base_dia - 6, h = base_th);
             
             // Central socket column
-            translate([0, 0, 0])
-                cylinder(d = socket_inner_d + (socket_wall * 2), h = socket_h);
+            cylinder(d = socket_inner_d + (socket_wall * 2), h = socket_h);
                 
             // 4x Rigid support ribs
             for (a = [0 : 90 : 270]) {
@@ -35,7 +38,7 @@ module tower_base() {
             }
         }
 
-        // Central dowel/mast socket with self-centering lead-in chamfer
+        // Central socket with self-centering lead-in chamfer (starts at Z = 3)
         translate([0, 0, 3])
             cylinder(d = socket_inner_d, h = socket_h + 2);
         translate([0, 0, socket_h - 2])
@@ -55,33 +58,67 @@ module tower_base() {
     }
 }
 
-// 2. Optional 3D-Printable Lattice Mast Segment (Stackable)
-module tower_mast_segment(height = 100) {
+// 2. 100% 3D-Printable Alpine Mast Column
+// Total height = plug_b_len (26) + column_h (180) + plug_t_len (22) = 228 mm
+// Fits easily on FLSUN T1 (330mm max height).
+module tower_mast(column_h = 180) {
+    plug_b_len = 26.0; // Bottom tenon into base socket
+    plug_t_len = 22.0; // Top tenon into head socket
+    plug_d     = 20.0; // 0.4mm clearance fit into 20.4mm sockets
+    collar_d   = 30.0; // Flanged stop-collar
+    wire_id    = 10.0; // Internal wiring channel
+    
     difference() {
         union() {
-            // Main lattice column
-            cylinder(d = 20.0, h = height);
+            // Lower Tenon (starts at Z = 0 flat on bed)
+            cylinder(d = plug_d, h = plug_b_len);
             
-            // Lower plug that fits into tower_base socket
-            translate([0, 0, -24])
-                cylinder(d = 20.0, h = 24);
+            // Flanged stop collar transition (rests on top of base socket)
+            translate([0, 0, plug_b_len])
+                cylinder(d1 = plug_d, d2 = collar_d, h = 4.0);
+            
+            // Main Tower Mast Body (Tapered Alpine Pylon with stiffening ribs)
+            translate([0, 0, plug_b_len + 4.0])
+                cylinder(d1 = collar_d, d2 = collar_d - 4.0, h = column_h - 4.0);
+                
+            // 4x Structural Aerodynamic Stiffening Ribs (resist cable pull)
+            for (a = [0, 90, 180, 270]) {
+                rotate([0, 0, a])
+                    translate([-2.0, 0, plug_b_len + 2.0])
+                        hull() {
+                            cube([4.0, collar_d / 2 + 5.0, 4.0]);
+                            translate([0, 0, column_h - 10.0])
+                                cube([4.0, collar_d / 2 + 1.0, 4.0]);
+                        }
+            }
+            
+            // Top Tenon Transition & Upper Plug (slides into station head socket)
+            translate([0, 0, plug_b_len + column_h])
+                cylinder(d1 = collar_d - 4.0, d2 = plug_d, h = 3.0);
+            translate([0, 0, plug_b_len + column_h + 3.0])
+                cylinder(d = plug_d, h = plug_t_len - 3.0);
         }
         
-        // Upper receiving socket for stacking another segment or tower head
-        translate([0, 0, height - 24])
-            cylinder(d = socket_inner_d, h = 26);
+        // Continuous Central Wiring Conduit (hollow all the way through for Phase 2 motor wires)
+        translate([0, 0, -1])
+            cylinder(d = wire_id, h = plug_b_len + column_h + plug_t_len + 4);
             
-        // Hollow interior for lightness / wiring (pass motor wires internally in Phase 2!)
-        cylinder(d = 12.0, h = height + 10, center = true);
-        
-        // Decorative / lightweight lattice cutouts
-        for (z = [15 : 20 : height - 20]) {
+        // Lower M4 Cross-Pin Hole (aligns with tower_base pin hole)
+        translate([0, 0, 16.2])
+            rotate([90, 0, 0])
+                cylinder(d = 4.2, h = plug_d + 10, center = true);
+                
+        // Upper M4 Cross-Pin Hole (aligns with station head pin hole)
+        translate([0, 0, plug_b_len + column_h + 12.5])
+            rotate([0, 90, 0])
+                cylinder(d = 4.2, h = plug_d + 10, center = true);
+                
+        // Decorative / Weight-reduction Diamond Windows (45° angles = support-free!)
+        for (z = [plug_b_len + 25 : 30 : plug_b_len + column_h - 25]) {
             translate([0, 0, z])
                 rotate([90, 0, 0])
-                    cylinder(d = 10, h = 24, center = true);
-            translate([0, 0, z + 10])
-                rotate([0, 90, 0])
-                    cylinder(d = 10, h = 24, center = true);
+                    rotate([0, 0, 45])
+                        cube([12.0, 12.0, collar_d + 14], center = true);
         }
     }
 }
@@ -94,5 +131,5 @@ part = "base"; // "base" or "mast"
 if (part == "base") {
     tower_base();
 } else if (part == "mast") {
-    tower_mast_segment(100);
+    tower_mast();
 }

@@ -19,6 +19,7 @@ Each file prints a **single object** (or matched pair) centered right in the mid
 | **07** | [`07_tower_head_station_b.scad`](file:///Volumes/Samsung%20990%201TB/Hari/gandola/models/07_tower_head_station_b.scad) | Tension Tower Head B | Forest Green / Black | 30% | ~30–40 min |
 | **08** | [`08_tower_sheaves_pair.scad`](file:///Volumes/Samsung%20990%201TB/Hari/gandola/models/08_tower_sheaves_pair.scad) | Pair of 54mm Sheaves | Gold / Silver | 30% | ~30–40 min |
 | **09** | [`09_tower_base.scad`](file:///Volumes/Samsung%20990%201TB/Hari/gandola/models/09_tower_base.scad) | 110mm Baseplate *(Print 2x)* | Dark Slate / White | 20% | ~35–45 min each |
+| **10** | [`10_tower_mast.scad`](file:///Volumes/Samsung%20990%201TB/Hari/gandola/models/10_tower_mast.scad) | Alpine Tower Mast Column *(Print 2x)* | Dark Green / Silver / White | 25% | ~60–75 min each |
 
 ---
 
@@ -30,9 +31,9 @@ Each file prints a **single object** (or matched pair) centered right in the mid
 3. **Attach Hanger Arm:** Drop an M3 nut into the captive pocket on the roof clevis. Slide the lower tab of the **C-Hanger Arm** (`03`) into the slot and push an M3 $\times$ 16mm screw through.
 4. **Hang on Carriage:** Drop an M3 nut into the lower clevis of the **Trolley Carriage** (`04`). Slide the top eyelet of the **Hanger Arm** (`03`) into the fork and secure with an M3 $\times$ 16mm screw.
 
-### 2. Towers & Rigging (Steps 06 – 09)
-1. **Tower Masts:** Cut two standard **20 mm (or 3/4 inch)** wooden dowels or PVC pipes to your desired display height (e.g. 12–18 inches / 30–45 cm).
-2. **Mount Heads & Bases:** Push the bottom of each mast into a **Tower Base** (`09`), and push **Station A** (`06`) and **Station B** (`07`) onto the tops.
+### 2. Towers & Rigging (Steps 06 – 10)
+1. **Tower Masts:** You can 3D print the authentic Alpine masts using **[`10_tower_mast.scad`](file:///Volumes/Samsung%20990%201TB/Hari/gandola/models/10_tower_mast.scad)** (fits directly in the FLSUN T1 at 228mm height with stiffening ribs and internal wire channels), or use standard 20mm (3/4") wooden dowels / PVC pipes.
+2. **Mount Heads & Bases:** Push the bottom tenon of each mast into a **Tower Base** (`09`), and push **Station A** (`06`) and **Station B** (`07`) onto the top tenons. Insert M4 screws into the cross-pin holes to lock firmly against cable pull.
 3. **Mount Sheaves:** Bolt one 54mm **Sheave Wheel** (`08`) onto each tower head using M5 $\times$ 25mm bolts and locknuts.
 4. **Rigging:** String 1.0–1.5mm monofilament or nylon-coated wire across the sheaves and thread through the gondola trolley.
 5. **Tensioning:** Tighten the tensioning bolt on Station B until line sag disappears, and glide your gondola across!

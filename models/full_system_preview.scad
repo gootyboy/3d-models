@@ -14,28 +14,29 @@ use <gondola_cabin.scad>;
 $fn = 30;
 
 // Preview parameters
-span_distance = 320; // Visual preview span (mm)
-tower_height  = 160; // Visual preview mast height (mm)
+span_distance = 360; // Visual preview span (mm)
+mast_col_h    = 180; // 3D-printed mast column height (mm)
+tower_z       = 3 + 26 + mast_col_h; // Height of tower head seating shoulder
 gondola_pos   = 0.45; // Position along span (0.0 to 1.0)
 
 // 1. Tower A (Drive-Ready Station)
 translate([-span_distance / 2, 0, 0]) {
     color("darkslategray") tower_base();
-    color("silver") translate([0, 0, 30]) cylinder(d = 20, h = tower_height - 30);
-    color("crimson") translate([0, 0, tower_height]) tower_head_a();
-    color("gold") translate([0, 9, tower_height + 28]) rotate([90, 0, 0]) tower_sheave();
+    color("darkgreen") translate([0, 0, 3]) tower_mast(column_h = mast_col_h);
+    color("crimson") translate([0, 0, tower_z + 25]) tower_head_a();
+    color("gold") translate([0, 9, tower_z + 25 + 28]) rotate([90, 0, 0]) tower_sheave();
 }
 
 // 2. Tower B (Tension Station)
 translate([span_distance / 2, 0, 0]) {
     color("darkslategray") tower_base();
-    color("silver") translate([0, 0, 30]) cylinder(d = 20, h = tower_height - 30);
-    color("forestgreen") translate([0, 0, tower_height + 12]) tower_head_b();
-    color("gold") translate([15, 0, tower_height + 12]) rotate([90, 0, 0]) tower_sheave();
+    color("darkgreen") translate([0, 0, 3]) tower_mast(column_h = mast_col_h);
+    color("forestgreen") translate([0, 0, tower_z + 25 + 12]) tower_head_b();
+    color("gold") translate([15, 0, tower_z + 25 + 12]) rotate([90, 0, 0]) tower_sheave();
 }
 
 // 3. Track Cable (Visualized in black)
-cable_z = tower_height + 28;
+cable_z = tower_z + 25 + 28;
 color("black")
     translate([0, 0, cable_z])
         rotate([0, 90, 0])
