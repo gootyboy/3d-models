@@ -31,14 +31,14 @@ module tower_sheave() {
         translate([0, 0, -1])
             cylinder(d = bore_dia, h = hub_h + 2);
         
-        // Deep cable groove
+        // Deep cable groove (V-groove from pitch dia out to edge)
         translate([0, 0, hub_h / 2])
             rotate_extrude(convexity = 10) {
                 translate([sheave_pitch_dia / 2, 0, 0])
                     polygon([
-                        [-2.0, 0],
-                        [6.0, 3.2],
-                        [6.0, -3.2]
+                        [0.0, 0],
+                        [8.0, 3.5],
+                        [8.0, -3.5]
                     ]);
             }
         
@@ -47,11 +47,11 @@ module tower_sheave() {
             rotate([90, 0, 0])
                 cylinder(d = grub_screw_dia, h = 20, center = false);
             
-        // Decorative weight-reduction spoke cutouts (holiday snowflake / star style)
+        // Decorative weight-reduction spoke cutouts (solid 3.6mm wall from groove)
         for (a = [0 : 60 : 300]) {
             rotate([0, 0, a])
-                translate([16, 0, -1])
-                    cylinder(d = 8, h = hub_h + 2);
+                translate([15.0, 0, -1])
+                    cylinder(d = 6.8, h = hub_h + 2);
         }
     }
 }
