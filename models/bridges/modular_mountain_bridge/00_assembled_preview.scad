@@ -19,14 +19,10 @@ module assembled_bridge() {
         translate([0, 0, 3.8])
             top_cable_pylon_tower_part();
 
-    // High-Tightness Under-Deck Base Clamps (installed strictly below deck at X = +/- 25.0mm)
-    for (cx = [-25.0, 25.0]) {
-        color([0.85, 0.35, 0.20]) // High-visibility safety orange clamp
-            translate([cx - 6.0, 0, 0]) {
-                under_deck_clamp_body();
-                locking_wedge_key();
-            }
-    }
+    // Full-Length 108mm Sub-Deck Truss Cradle (Spans X = -54 to +54mm)
+    color([0.85, 0.35, 0.20]) // High-visibility safety orange cradle
+        translate([0, 0, -2.4])
+            full_length_deck_cradle();
 }
 
 assembled_bridge();

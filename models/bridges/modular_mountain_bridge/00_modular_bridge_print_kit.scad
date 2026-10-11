@@ -1,5 +1,5 @@
 // ====================================================================
-// Modular Snap-In Mountain Bridge - COMPLETE PRINT KIT (WITH DECK CLAMP)
+// Modular Snap-In Mountain Bridge - COMPLETE PRINT KIT (WITH 108MM CRADLE)
 // ====================================================================
 
 use <01_bridge_deck.scad>
@@ -8,23 +8,21 @@ use <03_top_cable_pylon_tower.scad>
 use <04_deck_base_clamp.scad>
 
 module modular_bridge_print_kit() {
-    translate([0, 0, 0])
+    // 1. Roadway Bridge Deck (Flat on bed at Z = 0)
+    translate([0, -36.0, 0])
         bridge_deck_part();
 
-    translate([0, -28.0, 0])
-        bottom_center_pillar_part();
+    // 2. Full-Length 108mm Sub-Deck Truss Cradle (Flat on bed at Z = 0)
+    translate([0, 0, 0])
+        full_length_deck_cradle();
 
-    translate([0, 28.0, 4.5])
+    // 3. Top Cable Pylon Tower (Flat on back at Z = 0)
+    translate([-20.0, 36.0, 4.5])
         top_cable_pylon_tower_part();
 
-    // High-Tightness Under-Deck Clamp & Locking Wedge Set (Oriented flat on bed)
-    translate([-42.0, -26.0, 0])
-        rotate([0, -90, 0])
-            under_deck_clamp_body();
-
-    translate([-52.0, -26.0, 0])
-        rotate([0, 0, 90])
-            locking_wedge_key();
+    // 4. Bottom Center Support Pillar 30mm (Flat on bed at Z = 0)
+    translate([48.0, 36.0, 0])
+        bottom_center_pillar_part();
 }
 
 modular_bridge_print_kit();
