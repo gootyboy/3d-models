@@ -40,6 +40,26 @@ module bridge_deck_part() {
                 translate([x_end - 4.5, -deck_w/2, -2.0])
                     cube([9.0, deck_w, 2.0]);
             }
+
+            // --- RAISED ROADWAY SHOULDERS / CURBS (SEPARATING ROAD FROM CABLE HOLES) ---
+            // Height = 1.2mm above road, Mountable 45° curb slope toward center, leaves pylon clearance (|X| <= 4.8)
+            for (side_sign = [-1, 1]) {
+                y_in     = side_sign * 7.8;
+                y_top_in = side_sign * 8.5;
+                y_out    = side_sign * 9.3;
+                for (span = [[-bridge_l/2, -4.8], [4.8, bridge_l/2]]) {
+                    x0 = span[0];
+                    xl = span[1] - span[0];
+                    hull() {
+                        // Flat base on deck plate (Z = deck_thick)
+                        translate([x0, min(y_in, y_out), deck_thick])
+                            cube([xl, abs(y_out - y_in), 0.1]);
+                        // Raised top curb ridge (Z = deck_thick + 1.2)
+                        translate([x0, min(y_top_in, y_out), deck_thick + 1.1])
+                            cube([xl, abs(y_out - y_top_in), 0.1]);
+                    }
+                }
+            }
         }
 
         // --- TOP SNAP-IN THROUGH-SOCKETS FOR V-PYLON (Y = +/- 9.5 mm) ---
