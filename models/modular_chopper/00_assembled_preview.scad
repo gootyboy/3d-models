@@ -1,13 +1,14 @@
 // ====================================================================
-// Modular Chopper System (3.5 cm Square) - Full Assembled Preview
+// Modular Chopper System (5.0 cm Length Standard) - Full Assembled Preview
 // Zero Floating Objects - 100% Supportless DFAM Architecture
 //
 // Features:
+// - Total Assembled Length: Exactly 50.0 mm (5.0 cm) from nose to tail fin tip
 // - Full interactive 3D assembly of all modular components
 // - Rotor rotation control via `rotor_angle` variable or animation ($t)
 // - Choice of landing gear (gear_mode = "skids" or "wheels")
 // - Choice of rotor style (rotor_blades = 2 or 3)
-// - Docked on the 35.0 mm x 35.0 mm modular interlocking helipad tile
+// - Docked on the 50.0 mm x 50.0 mm (5.0 cm) modular interlocking helipad tile
 // ====================================================================
 
 use <01_chopper_fuselage.scad>
@@ -23,8 +24,8 @@ rotor_blades = 2;        // 2 or 3 blades
 show_helipad = true;
 
 // Vertical stack offsets
-helipad_top_z   = 3.2;   // Top face of 35mm helipad deck
-gear_height_z   = 2.2;   // Height added by landing gear
+helipad_top_z   = 3.8;   // Top face of 50mm helipad deck
+gear_height_z   = 2.6;   // Height added by landing gear spine
 fuselage_base_z = show_helipad ? helipad_top_z : 0;
 
 module assembled_chopper() {
@@ -41,20 +42,18 @@ module assembled_chopper() {
         // 2. Chopper Fuselage (docked onto gear pins at gear_height_z)
         translate([0, 0, gear_height_z]) {
             color([0.96, 0.72, 0.12]) { // Rescue Safety Yellow / Gold
-                modular_cabin();
-                translate([-6.5, 0, 2.2])
-                    modular_tail_boom();
+                chopper_fuselage();
             }
 
-            // 3. Rotatable Rotor Assembly (mounted on mast collar at Z = 12.7mm)
-            translate([0, 0, 12.7]) {
+            // 3. Rotatable Rotor Assembly (mounted on mast collar at Z = 20.0mm)
+            translate([0, 0, 20.0]) {
                 rotate([0, 0, ($t > 0) ? ($t * 360) : rotor_angle]) {
                     color([0.18, 0.20, 0.22]) // Carbon graphite black
-                        rotatable_rotor(blades = rotor_blades, bore_d = 2.8);
+                        rotatable_rotor(blades = rotor_blades, bore_d = 4.2);
                 }
 
                 // 4. Rotor Axle Pin & Retaining Cap (inserted through rotor into mast)
-                translate([0, 0, 2.2 + 1.2])
+                translate([0, 0, 3.2 + 1.6])
                     rotate([180, 0, 0])
                         color([0.75, 0.78, 0.82]) // Polished titanium
                             rotor_axle_pin();
@@ -63,7 +62,7 @@ module assembled_chopper() {
     }
 }
 
-// 5. Modular 35mm Helipad Base
+// 5. Modular 50mm Helipad Base
 if (show_helipad) {
     color([0.55, 0.58, 0.62]) // Concrete tarmac with bright markings
         helipad_tile();

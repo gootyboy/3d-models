@@ -1,26 +1,28 @@
 // ====================================================================
-// Modular 35mm Chopper Base - 3.5 cm Square Interlocking Helipad Tile
-// Dimensions: 35.0 mm x 35.0 mm x 3.2 mm
+// Modular Helipad Base - 5.0 cm (50mm) Square Interlocking Tile
+// Dimensions: 50.0 mm x 50.0 mm x 3.8 mm
+// Standard tile footprint designed for 5.0 cm Modular Chopper.
+//
 // Features:
-// - Standard 35mm modular grid footprint
+// - Standard 50mm (5.0 cm) modular grid footprint
 // - Male / Female dovetail connectors on orthogonal sides (0.25mm clearance)
-// - Precision skid landing alignment slots (13.0mm track)
+// - Precision skid landing alignment slots (20.0mm track for 5cm chopper skids)
 // - Helipad 'H' and concentric marking rings
 // - 45-degree chamfered perimeter to prevent corner warping
 // ====================================================================
 
-$fn = 40;
+$fn = 48;
 
-tile_size = 35.0;
-base_h    = 2.4;
-relief_h  = 0.8;
+tile_size = 50.0;
+base_h    = 2.8;
+relief_h  = 1.0;
 total_h   = base_h + relief_h;
-skid_span = 13.0; // Distance between skid centers
+skid_span = 20.0; // Distance between skid centers (matches 5cm chopper)
 
 // Dovetail parameters
-dt_w_base = 5.0;
-dt_w_tip  = 7.4;
-dt_depth  = 3.2;
+dt_w_base = 7.0;
+dt_w_tip  = 10.5;
+dt_depth  = 4.5;
 dt_tol    = 0.25; // Radial tolerance for snap fit
 
 module dovetail_male() {
@@ -50,22 +52,22 @@ module dovetail_female() {
 module helipad_markings() {
     // Concentric outer ring
     difference() {
-        cylinder(r = 13.0, h = relief_h, center = false);
+        cylinder(r = 18.5, h = relief_h, center = false);
         translate([0, 0, -0.1])
-            cylinder(r = 11.4, h = relief_h + 0.2, center = false);
+            cylinder(r = 16.5, h = relief_h + 0.2, center = false);
     }
 
     // Inner dashed accent ring
     difference() {
-        cylinder(r = 8.5, h = relief_h * 0.7, center = false);
+        cylinder(r = 12.0, h = relief_h * 0.7, center = false);
         translate([0, 0, -0.1])
-            cylinder(r = 7.3, h = relief_h + 0.2, center = false);
+            cylinder(r = 10.5, h = relief_h + 0.2, center = false);
     }
 
     // Classic Helipad 'H' symbol
-    h_h = 10.0;
-    h_w = 7.5;
-    h_t = 1.6;
+    h_h = 14.0;
+    h_w = 10.5;
+    h_t = 2.2;
     // Left vertical bar
     translate([-h_w/2 + h_t/2, 0, relief_h/2])
         cube([h_t, h_h, relief_h], center = true);
@@ -78,8 +80,8 @@ module helipad_markings() {
 
     // Corner alignment chevrons
     for (a = [45, 135, 225, 315]) {
-        rotate([0, 0, a]) translate([14.2, 0, relief_h/2])
-            cube([2.0, 1.2, relief_h], center = true);
+        rotate([0, 0, a]) translate([20.0, 0, relief_h/2])
+            cube([2.8, 1.6, relief_h], center = true);
     }
 }
 
@@ -88,10 +90,10 @@ module helipad_tile() {
         union() {
             // Main chamfered tile body
             hull() {
-                // Flat bottom contact at Z = 0 (33mm x 33mm with 1mm corner chamfers)
+                // Flat bottom contact at Z = 0 (48mm x 48mm with 1mm corner chamfers)
                 translate([0, 0, 0])
-                    cube([tile_size - 1.0, tile_size - 1.0, 0.1], center = true);
-                // Beveled top deck at Z = base_h (35mm x 35mm)
+                    cube([tile_size - 1.4, tile_size - 1.4, 0.1], center = true);
+                // Beveled top deck at Z = base_h (50mm x 50mm)
                 translate([0, 0, base_h])
                     cube([tile_size, tile_size, 0.1], center = true);
             }
@@ -115,14 +117,14 @@ module helipad_tile() {
 
         // Skid landing guide grooves (aligned along X axis, spaced at skid_span)
         for (sy = [-1, 1]) {
-            translate([0, sy * skid_span/2, base_h + relief_h - 0.4])
-                cube([26.0, 2.2, 1.0], center = true);
+            translate([0, sy * skid_span/2, base_h + relief_h - 0.5])
+                cube([36.0, 3.0, 1.2], center = true);
         }
 
         // Skid center detent dimples
-        for (sy = [-1, 1], sx = [-6.0, 6.0]) {
-            translate([sx, sy * skid_span/2, base_h + relief_h - 0.7])
-                cylinder(r = 1.3, h = 1.0, center = true);
+        for (sy = [-1, 1], sx = [-8.0, 8.0]) {
+            translate([sx, sy * skid_span/2, base_h + relief_h - 0.9])
+                cylinder(r = 1.8, h = 1.2, center = true);
         }
     }
 }

@@ -1,134 +1,158 @@
 // ====================================================================
 // Modular Chopper Undercarriage (Skids & Wheeled Taxi Gear)
-// Precision modular landing gear interchangeable system.
+// Precision modular landing gear interchangeable system for 5.0 cm Chopper.
 //
 // Engineering Specifications:
-// - Standardized Dual Chassis Mounting Pins (2.0mm dia x 2.2mm h, 10.0mm pitch)
-// - Matches 2.2mm chassis sockets (0.2mm clearance fit)
-// - Option "skids": Twin landing skids (13.0mm track, 24.0mm length, 45° upturns)
-//   -> Aligns directly with 13.0mm guide slots on 35mm Helipad base
+// - Standardized Dual Chassis Mounting Pins (2.8mm dia x 2.6mm h)
+// - Pin locations: X = -3.5mm (rear) and X = +7.5mm (front)
+//   -> 100% Non-interfering with tail boom snap socket (which terminates at X = -5.0mm)
+// - Option "skids": Twin landing skids (20.0mm track, 35.0mm length, 100% flat bed runner)
 // - Option "wheels": Tricycle taxi gear (dual main wheels + steerable nose wheel)
 // - 100% self-supporting flat print layout at Z = 0
 // ====================================================================
 
-$fn = 36;
+$fn = 40;
 
 gear_type = "skids"; // "skids" or "wheels"
 
-pin_d     = 2.0;
-pin_h     = 2.2;
-pin_pitch = 10.0; // Distance between mounting pins along X
-skid_span = 13.0; // Width between skids
+pin_d        = 2.8;
+pin_h        = 2.6;
+skid_rear_x  = -3.5;
+skid_front_x =  7.5;
+skid_span    = 20.0; // Width between skids
 
-module mounting_spine() {
-    // Central mounting bridge block
+module mounting_spine(skid_rear_x = -3.5, skid_front_x = 7.5) {
+    // Central mounting bridge block - 100% flat grounded at Z = 0
     hull() {
-        translate([pin_pitch/2, 0, 0.8])
-            cylinder(d = 3.6, h = 1.4, center = false);
-        translate([-pin_pitch/2, 0, 0.8])
-            cylinder(d = 3.6, h = 1.4, center = false);
+        translate([skid_front_x, 0, 0])
+            cylinder(d = 5.2, h = 2.6, center = false);
+        translate([skid_rear_x, 0, 0])
+            cylinder(d = 5.2, h = 2.6, center = false);
     }
     // Twin chassis mounting registration pins
-    for (sx = [-pin_pitch/2, pin_pitch/2]) {
-        translate([sx, 0, 2.2]) {
+    for (sx = [skid_rear_x, skid_front_x]) {
+        translate([sx, 0, 2.6]) {
             cylinder(d = pin_d, h = pin_h, center = false);
             // Pin lead-in chamfer
-            translate([0, 0, pin_h - 0.4])
-                cylinder(d1 = pin_d, d2 = pin_d - 0.5, h = 0.4, center = false);
+            translate([0, 0, pin_h - 0.5])
+                cylinder(d1 = pin_d, d2 = pin_d - 0.6, h = 0.5, center = false);
         }
     }
 }
 
-module landing_skids() {
+module landing_skids(skid_rear_x = -3.5, skid_front_x = 7.5) {
     difference() {
         union() {
-            mounting_spine();
+            // 1. Central spine grounded flat at Z = 0
+            mounting_spine(skid_rear_x = skid_rear_x, skid_front_x = skid_front_x);
 
-            // Arched cross struts from spine to skids
-            for (sx = [-pin_pitch/2, pin_pitch/2]) {
+            // 2. Solid cross struts grounded flat on Z = 0 (connect spine to skids)
+            for (sx = [skid_rear_x, skid_front_x]) {
                 for (sy = [-1, 1]) {
                     hull() {
-                        translate([sx, 0, 1.4])
-                            sphere(d = 1.6);
-                        translate([sx, sy * skid_span/2, 0.8])
-                            sphere(d = 1.5);
+                        translate([sx, 0, 0])
+                            cylinder(d = 4.8, h = 2.4, center = false);
+                        translate([sx, sy * skid_span/2, 0])
+                            cylinder(d = 3.2, h = 2.0, center = false);
                     }
                 }
             }
 
-            // Twin longitudinal skids
+            // 3. Twin longitudinal skids (100% continuous flat bed runner on Z = 0)
+            // Completely flat on bottom so it touches the ground along its entire length!
             for (sy = [-1, 1]) {
                 y = sy * skid_span/2;
-                // Main runner tube
+
+                // Main flat runner touching the ground from X = -16.5 to X = +16.5
                 hull() {
-                    translate([-10.0, y, 0.75])
-                        sphere(d = 1.5);
-                    translate([8.5, y, 0.75])
-                        sphere(d = 1.5);
+                    translate([-15.5, y, 0])
+                        cylinder(d = 3.2, h = 1.4, center = false);
+                    translate([15.5, y, 0])
+                        cylinder(d = 3.2, h = 1.4, center = false);
                 }
-                // Front upturned toe (45° angle)
+
+                // Chamfered top ridge (45° taper for clean finish)
                 hull() {
-                    translate([8.5, y, 0.75])
-                        sphere(d = 1.5);
-                    translate([11.5, y, 2.2])
-                        sphere(d = 1.3);
+                    translate([-15.0, y, 1.2])
+                        cylinder(d1 = 3.2, d2 = 1.6, h = 1.0, center = false);
+                    translate([15.0, y, 1.2])
+                        cylinder(d1 = 3.2, d2 = 1.6, h = 1.0, center = false);
                 }
-                // Rear kick
+
+                // Front nose cap
                 hull() {
-                    translate([-10.0, y, 0.75])
-                        sphere(d = 1.5);
-                    translate([-11.8, y, 1.4])
-                        sphere(d = 1.2);
+                    translate([15.5, y, 0])
+                        cylinder(d = 3.2, h = 1.4, center = false);
+                    translate([17.2, y, 0])
+                        cylinder(d1 = 2.4, d2 = 1.2, h = 1.8, center = false);
                 }
-                // Boarding step on starboard skid
+
+                // Rear tail cap
+                hull() {
+                    translate([-15.5, y, 0])
+                        cylinder(d = 3.2, h = 1.4, center = false);
+                    translate([-17.0, y, 0])
+                        cylinder(d1 = 2.4, d2 = 1.2, h = 1.6, center = false);
+                }
+
+                // Starboard boarding step (grounded flat on Z = 0)
                 if (sy > 0) {
-                    translate([0, y + 0.9, 0.75])
-                        cube([4.0, 1.0, 0.8], center = true);
+                    translate([2.0, y + 1.8, 0])
+                        cube([6.0, 1.6, 1.4], center = false);
                 }
             }
         }
 
         // Flat ground contact plane at Z = 0
         translate([0, 0, -5.0])
-            cube([40, 40, 10], center = true);
+            cube([60, 60, 10], center = true);
     }
 }
 
 module wheeled_gear() {
     difference() {
         union() {
+            // Central spine grounded flat at Z = 0
             mounting_spine();
 
-            // Nose gear strut and wheel (+X)
+            // Nose gear strut grounded on Z = 0
             hull() {
-                translate([pin_pitch/2, 0, 1.2])
-                    sphere(d = 1.6);
-                translate([pin_pitch/2 + 2.0, 0, 0.8])
-                    sphere(d = 1.6);
+                translate([skid_front_x, 0, 0])
+                    cylinder(d = 4.8, h = 2.4, center = false);
+                translate([skid_front_x + 3.2, 0, 0])
+                    cylinder(d = 3.6, h = 2.0, center = false);
             }
-            // Nose wheel
-            translate([pin_pitch/2 + 2.0, 0, 1.8])
-                rotate([90, 0, 0])
-                    cylinder(d = 3.6, h = 1.4, center = true);
+            // Nose wheel with grounded contact base
+            hull() {
+                translate([skid_front_x + 3.2, 0, 2.6])
+                    rotate([90, 0, 0])
+                        cylinder(d = 5.2, h = 2.0, center = true);
+                translate([skid_front_x + 3.2, 0, 0])
+                    cube([3.6, 2.0, 0.2], center = true);
+            }
 
-            // Main rear gear outrigger struts (-X)
+            // Main rear gear outrigger struts grounded on Z = 0
             for (sy = [-1, 1]) {
                 hull() {
-                    translate([-pin_pitch/2, 0, 1.2])
-                        sphere(d = 1.6);
-                    translate([-pin_pitch/2, sy * 6.0, 0.8])
-                        sphere(d = 1.6);
+                    translate([skid_rear_x, 0, 0])
+                        cylinder(d = 4.8, h = 2.4, center = false);
+                    translate([skid_rear_x, sy * 9.5, 0])
+                        cylinder(d = 3.6, h = 2.0, center = false);
                 }
-                // Rear wheels
-                translate([-pin_pitch/2, sy * 6.0, 1.8])
-                    rotate([90, 0, 0])
-                        cylinder(d = 4.0, h = 1.5, center = true);
+                // Rear wheels with grounded contact base
+                hull() {
+                    translate([skid_rear_x, sy * 9.5, 2.6])
+                        rotate([90, 0, 0])
+                            cylinder(d = 5.6, h = 2.2, center = true);
+                    translate([skid_rear_x, sy * 9.5, 0])
+                        cube([4.0, 2.2, 0.2], center = true);
+                }
             }
         }
 
         // Flat ground contact plane at Z = 0
         translate([0, 0, -5.0])
-            cube([40, 40, 10], center = true);
+            cube([60, 60, 10], center = true);
     }
 }
 
