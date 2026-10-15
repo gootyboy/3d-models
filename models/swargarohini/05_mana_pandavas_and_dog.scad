@@ -697,12 +697,7 @@ module dharma_dog() {
             ell([-8.5, 0, 11.5], [4.5, 3.5, 2.5], 16);
             ell([2.0, 0, 13.5], [4.0, 2.8, 2.0], 16);
         }
-        // 2. Chest apron / ruff between front legs sloping at 45 deg down towards paws:
-        hull() {
-            ell([9.0, 0, 14.5], [4.5, 3.5, 2.5], 16);
-            ell([9.5, 0, 8.5], [3.2, 2.2, 2.5], 16);
-            ell([10.2, 0, 3.0], [2.2, 1.4, 2.0], 14);
-        }
+
         // Sturdy, 100% printable alert tail with zero floating regions
         hull() {
             ell([-9.6, 0, 17.5], [3.6, 2.2, 3.2], 18);
