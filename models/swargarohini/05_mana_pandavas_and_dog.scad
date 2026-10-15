@@ -9,7 +9,7 @@ $fn = 32;
 eps = 0.02;
 
 // Selection
-char_select = "all_statues_kit"; // ["all_statues_kit", "procession_line", "dog", "yudhishthira", "bhima", "arjuna", "nakula", "sahadeva", "draupadi"]
+char_select = "procession_line"; // ["procession_line", "all_statues_kit", "dog", "yudhishthira", "bhima", "arjuna", "nakula", "sahadeva", "draupadi"]
 
 base_h = 2.0; // Standard thin flat plinth (2.0mm)
 
