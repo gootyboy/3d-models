@@ -564,11 +564,10 @@ module yudhishthira() {
     pleated_dhoti();
     royal_shawl_shoulder(-1);
     marigold_garland();
-    sculpted_arm([0, -11.0, 71.0], [-0.5, -12.5, 53.5], [1.0, -11.4, 37.0], 1.0);
-    relaxed_palm_hand([1.0, -11.4, 37.0], -1, 1.0);
-    sculpted_arm([0,  11.0, 71.0], [-0.5,  13.0, 54.5], [7.8,   7.2, 51.5], 1.0);
-    grip_drape_hand([7.8,   7.2, 51.5], 1.0);
-    cloth_drape(6.0, 50.0, 32.0);
+    for (s = [-1, 1]) {
+        sculpted_arm([0, s * 10.8, 71.0], [2.6, s * 12.0, 55.0], [9.2, s * 1.5, 61.0], 1.0);
+    }
+    namaste_palms([9.4, 0, 61.0], 1.0);
     translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("yudhishthira");
 }
 
@@ -577,10 +576,10 @@ module bhima() {
     athletic_torso(1.18, true);
     pleated_dhoti();
     bhima_scarf_cowl();
-    sculpted_arm([0, -12.4, 71.0], [-0.5, -14.6, 55.0], [8.8, -7.2, 52.0], 1.16);
-    clenched_fist([8.8, -7.2, 52.0], 1.16);
-    sculpted_arm([0,  12.4, 71.0], [-1.8,  17.0, 56.0], [3.0, 11.2, 48.5], 1.16);
-    hip_resting_hand([3.0, 11.2, 48.5], 1.16);
+    for (s = [-1, 1]) {
+        sculpted_arm([0, s * 12.6, 71.0], [3.2, s * 13.8, 55.0], [10.2, s * 1.6, 61.0], 1.16);
+    }
+    namaste_palms([10.4, 0, 61.0], 1.16);
     translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("bhima");
 }
 
@@ -589,11 +588,10 @@ module arjuna() {
     athletic_torso(0.98, true);
     pleated_dhoti();
     royal_shawl_shoulder(1);
-    sculpted_arm([0, -10.6, 71.0], [-0.5, -12.2, 53.5], [1.0, -11.0, 37.0], 0.96);
-    relaxed_palm_hand([1.0, -11.0, 37.0], -1, 0.96);
-    sculpted_arm([0,  10.6, 71.0], [-0.5,  12.5, 54.5], [8.0,  6.0, 52.0], 0.96);
-    grip_drape_hand([8.0, 6.0, 52.0], 0.96);
-    cloth_drape(-5.0, 50.0, 32.0);
+    for (s = [-1, 1]) {
+        sculpted_arm([0, s * 10.6, 71.0], [2.6, s * 11.8, 55.0], [9.0, s * 1.5, 60.5], 0.96);
+    }
+    namaste_palms([9.2, 0, 60.5], 0.96);
     translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("arjuna");
 }
 
@@ -614,10 +612,10 @@ module sahadeva() {
     athletic_torso(0.93, true);
     pleated_dhoti();
     royal_shawl_shoulder(-1);
-    sculpted_arm([0, -10.2, 70.5], [2.0, -11.5, 54.5], [8.8, -4.2, 58.5], 0.92);
-    reverent_chest_palm([8.8, -4.2, 58.5], 0.92);
-    sculpted_arm([0,  10.2, 70.5], [-0.5, 12.0, 53.5], [1.0, 10.8, 37.5], 0.92);
-    relaxed_palm_hand([1.0, 10.8, 37.5], 1, 0.92);
+    for (s = [-1, 1]) {
+        sculpted_arm([0, s * 10.2, 70.5], [2.6, s * 11.5, 55.0], [9.0, s * 1.5, 60.5], 0.92);
+    }
+    namaste_palms([9.2, 0, 60.5], 0.92);
     translate([0.4, 0, 81.2]) rotate([0, 4, 0]) character_head("sahadeva");
 }
 
