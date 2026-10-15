@@ -20,7 +20,12 @@
 
 $fn = 32;
 base_h = 2.0;
-fs = 0.85; // figure scale: ~95 design units -> ~81 mm
+
+// Figure scale: reduced by 20% per user request (0.85 * 0.80 = 0.68)
+fs = 0.68;
+
+// Figure rotation: -90 = facing front towards viewer (forward)
+figure_rot = -90;
 
 char_select = "trail"; // ["trail", "dog", "yudhishthira", "bhima", "arjuna", "nakula", "sahadeva", "draupadi"]
 
@@ -570,7 +575,7 @@ module dharma_dog() {
 }
 
 // ===================== SCENE ASSEMBLY =====================
-module on_base(x, y = 0, rot = -35, s = fs) {
+module on_base(x, y = 0, rot = figure_rot, s = fs) {
     translate([x, y, base_h]) rotate([0, 0, rot]) scale(s) children();
 }
 
@@ -584,7 +589,7 @@ module flat_base(x0, x1, w, r = 4) {
 
 module trail() {
     flat_base(-100, 132, 46);
-    on_base( 86.0, 0, -12, 1.0) dharma_dog();
+    on_base( 86.0, 0, figure_rot, 0.8) dharma_dog();
     on_base( 41.0) yudhishthira();
     on_base( 16.5) bhima();
     on_base( -8.0) arjuna();
