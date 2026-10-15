@@ -345,8 +345,8 @@ module draupadi_saree() {
     for (s = [-1, 1]) ell([7.4, s * 3.8, 1.2], [3.2, 2.2, 2.0]);
 }
 
-// Muscular arm with defined deltoid, bicep, forearm, and hand
-module sculpted_arm(S, E, W, H, scale_arm = 1.0) {
+// Muscular arm with defined deltoid, bicep, and forearm to wrist W
+module sculpted_arm(S, E, W, scale_arm = 1.0) {
     k = scale_arm;
     // Deltoid cap
     ell(S, [4.0 * k, 3.8 * k, 4.5 * k], 22);
@@ -363,12 +363,122 @@ module sculpted_arm(S, E, W, H, scale_arm = 1.0) {
         translate(E + 0.35 * (W - E)) sphere(r = 2.6 * k, $fn = 20);
         translate(W) sphere(r = 1.85 * k, $fn = 18);
     }
-    // Hand
-    hull() {
-        translate(W) sphere(r = 1.85 * k, $fn = 16);
-        ell(H, [1.4 * k, 1.2 * k, 1.7 * k], 16);
+}
+
+// 1. Natural relaxed hand with sculpted palm and fingers (hanging at side)
+module relaxed_palm_hand(W, side = -1, k = 1.0) {
+    translate(W) rotate([side * 6, 12, 0]) {
+        hull() {
+            sphere(r = 1.85 * k, $fn = 16);
+            ell([0.4 * k, 0, -2.0 * k], [1.1 * k, 1.4 * k, 1.4 * k], 16);
+        }
+        hull() {
+            ell([0.4 * k, 0, -2.0 * k], [1.1 * k, 1.4 * k, 1.4 * k], 16);
+            ell([0.7 * k, side * 0.1 * k, -4.2 * k], [0.8 * k, 1.2 * k, 1.3 * k], 16);
+        }
+        hull() {
+            ell([0.8 * k, -side * 0.7 * k, -0.6 * k], [0.65 * k, 0.65 * k, 0.8 * k], 14);
+            ell([1.1 * k, -side * 0.5 * k, -2.2 * k], [0.55 * k, 0.55 * k, 0.9 * k], 14);
+        }
     }
 }
+
+// 2. Muscular clenched fist (Bhima right hand at belly)
+module clenched_fist(W, k = 1.16) {
+    translate(W) rotate([0, -10, 35]) {
+        hull() {
+            sphere(r = 1.85 * k, $fn = 16);
+            ell([1.2 * k, 0, 0.2 * k], [1.8 * k, 1.5 * k, 1.6 * k], 18);
+        }
+        hull() {
+            ell([1.4 * k, -0.7 * k, 0.2 * k], [1.0 * k, 0.8 * k, 1.4 * k], 16);
+            ell([1.4 * k,  0.7 * k, 0.2 * k], [1.0 * k, 0.8 * k, 1.4 * k], 16);
+        }
+        hull() {
+            ell([0.5 * k, 1.3 * k, 0.6 * k], [0.85 * k, 0.8 * k, 0.8 * k], 14);
+            ell([1.4 * k, 0.5 * k, 0.7 * k], [0.75 * k, 0.85 * k, 0.7 * k], 14);
+        }
+    }
+}
+
+// 3. Anchored palm resting on hip (Bhima left hand)
+module hip_resting_hand(W, k = 1.16) {
+    translate(W) rotate([18, -12, -22]) {
+        hull() {
+            sphere(r = 1.85 * k, $fn = 16);
+            ell([0.8 * k, -0.6 * k, -0.8 * k], [1.5 * k, 1.2 * k, 1.4 * k], 18);
+        }
+        hull() {
+            ell([0.8 * k, -0.6 * k, -0.8 * k], [1.5 * k, 1.2 * k, 1.4 * k], 18);
+            ell([1.2 * k, -1.2 * k, -2.4 * k], [1.2 * k, 0.9 * k, 1.3 * k], 16);
+        }
+        hull() {
+            ell([-0.3 * k, 0.7 * k, 0.2 * k], [0.75 * k, 0.85 * k, 0.7 * k], 14);
+            ell([-0.7 * k, 1.4 * k, -0.6 * k], [0.65 * k, 0.75 * k, 0.7 * k], 14);
+        }
+    }
+}
+
+// 4. Gripping hand with curled palm and fingers (holding sash drape)
+module grip_drape_hand(W, k = 1.0) {
+    translate(W) rotate([8, -18, 22]) {
+        hull() {
+            sphere(r = 1.85 * k, $fn = 16);
+            ell([0.9 * k, -0.4 * k, -0.5 * k], [1.4 * k, 1.5 * k, 1.2 * k], 18);
+        }
+        hull() {
+            ell([0.9 * k, -0.4 * k, -0.5 * k], [1.4 * k, 1.5 * k, 1.2 * k], 18);
+            ell([1.5 * k, -0.8 * k, -1.9 * k], [1.1 * k, 1.2 * k, 1.1 * k], 16);
+        }
+        hull() {
+            ell([0.3 * k, 0.9 * k, 0.6 * k], [0.75 * k, 0.75 * k, 0.7 * k], 14);
+            ell([1.2 * k, 0.4 * k, 0.4 * k], [0.65 * k, 0.75 * k, 0.65 * k], 14);
+        }
+    }
+}
+
+// 5. Beautiful joined Namaste palms (Anjali mudra) at chest
+module namaste_palms(pos = [9.2, 0, 60.5], k = 0.92) {
+    translate(pos) {
+        for (s = [-1, 1]) {
+            hull() {
+                ell([0, s * 0.95 * k, 0], [1.4 * k, 0.75 * k, 1.8 * k], 16);
+                ell([0.5 * k, s * 0.7 * k, 2.2 * k], [1.2 * k, 0.65 * k, 1.6 * k], 16);
+            }
+            hull() {
+                ell([0.5 * k, s * 0.7 * k, 2.2 * k], [1.2 * k, 0.65 * k, 1.6 * k], 16);
+                ell([0.9 * k, s * 0.35 * k, 4.8 * k], [0.85 * k, 0.38 * k, 1.5 * k], 16);
+            }
+            hull() {
+                ell([0.9 * k, s * 0.35 * k, 4.8 * k], [0.85 * k, 0.38 * k, 1.5 * k], 16);
+                ell([1.0 * k, s * 0.15 * k, 6.2 * k], [0.55 * k, 0.22 * k, 0.9 * k], 14);
+            }
+            hull() {
+                ell([-0.5 * k, s * 1.05 * k, 0.7 * k], [0.75 * k, 0.65 * k, 0.75 * k], 14);
+                ell([-0.2 * k, s * 0.85 * k, 2.4 * k], [0.55 * k, 0.55 * k, 1.0 * k], 14);
+            }
+        }
+    }
+}
+
+// 6. Reverent open palm on chest/heart (Sahadeva)
+module reverent_chest_palm(W, k = 0.92) {
+    translate(W) rotate([-12, 22, -18]) {
+        hull() {
+            sphere(r = 1.85 * k, $fn = 16);
+            ell([0.2 * k, -0.2 * k, 1.8 * k], [0.8 * k, 1.3 * k, 1.5 * k], 16);
+        }
+        hull() {
+            ell([0.2 * k, -0.2 * k, 1.8 * k], [0.8 * k, 1.3 * k, 1.5 * k], 16);
+            ell([0.4 * k, -0.3 * k, 3.8 * k], [0.6 * k, 1.0 * k, 1.1 * k], 14);
+        }
+        hull() {
+            ell([0.3 * k, 0.8 * k, 0.5 * k], [0.55 * k, 0.55 * k, 0.65 * k], 14);
+            ell([0.4 * k, 0.6 * k, 1.7 * k], [0.45 * k, 0.55 * k, 0.65 * k], 14);
+        }
+    }
+}
+
 
 // Royal orange shawl draped over one shoulder
 module royal_shawl_shoulder(side = -1) {
@@ -454,8 +564,10 @@ module yudhishthira() {
     pleated_dhoti();
     royal_shawl_shoulder(-1);
     marigold_garland();
-    sculpted_arm([0, -11.0, 71.0], [-0.5, -12.5, 53.5], [1.0, -11.4, 37.0], [1.8, -11.2, 30.0], 1.0);
-    sculpted_arm([0,  11.0, 71.0], [-0.5,  13.0, 54.5], [7.8,   7.2, 51.5], [9.8,   5.0, 51.0], 1.0);
+    sculpted_arm([0, -11.0, 71.0], [-0.5, -12.5, 53.5], [1.0, -11.4, 37.0], 1.0);
+    relaxed_palm_hand([1.0, -11.4, 37.0], -1, 1.0);
+    sculpted_arm([0,  11.0, 71.0], [-0.5,  13.0, 54.5], [7.8,   7.2, 51.5], 1.0);
+    grip_drape_hand([7.8,   7.2, 51.5], 1.0);
     cloth_drape(6.0, 50.0, 32.0);
     translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("yudhishthira");
 }
@@ -465,8 +577,10 @@ module bhima() {
     athletic_torso(1.18, true);
     pleated_dhoti();
     bhima_scarf_cowl();
-    sculpted_arm([0, -12.4, 71.0], [-0.5, -14.6, 55.0], [8.8, -7.2, 52.0], [11.0, -4.8, 51.5], 1.16);
-    sculpted_arm([0,  12.4, 71.0], [-1.8,  17.0, 56.0], [3.0, 11.2, 48.5], [4.8,  9.2, 46.5], 1.16);
+    sculpted_arm([0, -12.4, 71.0], [-0.5, -14.6, 55.0], [8.8, -7.2, 52.0], 1.16);
+    clenched_fist([8.8, -7.2, 52.0], 1.16);
+    sculpted_arm([0,  12.4, 71.0], [-1.8,  17.0, 56.0], [3.0, 11.2, 48.5], 1.16);
+    hip_resting_hand([3.0, 11.2, 48.5], 1.16);
     translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("bhima");
 }
 
@@ -475,8 +589,10 @@ module arjuna() {
     athletic_torso(0.98, true);
     pleated_dhoti();
     royal_shawl_shoulder(1);
-    sculpted_arm([0, -10.6, 71.0], [-0.5, -12.2, 53.5], [1.0, -11.0, 37.0], [1.8, -10.8, 30.0], 0.96);
-    sculpted_arm([0,  10.6, 71.0], [-0.5,  12.5, 54.5], [8.0,  6.0, 52.0], [10.0, 4.0, 51.5], 0.96);
+    sculpted_arm([0, -10.6, 71.0], [-0.5, -12.2, 53.5], [1.0, -11.0, 37.0], 0.96);
+    relaxed_palm_hand([1.0, -11.0, 37.0], -1, 0.96);
+    sculpted_arm([0,  10.6, 71.0], [-0.5,  12.5, 54.5], [8.0,  6.0, 52.0], 0.96);
+    grip_drape_hand([8.0, 6.0, 52.0], 0.96);
     cloth_drape(-5.0, 50.0, 32.0);
     translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("arjuna");
 }
@@ -487,8 +603,9 @@ module nakula() {
     pleated_dhoti();
     royal_shawl_both();
     for (s = [-1, 1]) {
-        sculpted_arm([0, s * 10.2, 70.5], [2.6, s * 11.5, 55.0], [9.2, s * 1.9, 60.5], [11.0, s * 0.7, 65.5], 0.92);
+        sculpted_arm([0, s * 10.2, 70.5], [2.6, s * 11.5, 55.0], [9.0, s * 1.5, 60.5], 0.92);
     }
+    namaste_palms([9.2, 0, 60.5], 0.92);
     translate([0.4, 0, 81.2]) rotate([0, 4, 0]) character_head("nakula");
 }
 
@@ -497,8 +614,10 @@ module sahadeva() {
     athletic_torso(0.93, true);
     pleated_dhoti();
     royal_shawl_shoulder(-1);
-    sculpted_arm([0, -10.2, 70.5], [2.0, -11.5, 54.5], [8.8, -4.2, 59.5], [10.5, -2.8, 64.0], 0.92);
-    sculpted_arm([0,  10.2, 70.5], [-0.5, 12.0, 53.5], [1.0, 10.8, 37.5], [1.8, 10.6, 30.5], 0.92);
+    sculpted_arm([0, -10.2, 70.5], [2.0, -11.5, 54.5], [8.8, -4.2, 58.5], 0.92);
+    reverent_chest_palm([8.8, -4.2, 58.5], 0.92);
+    sculpted_arm([0,  10.2, 70.5], [-0.5, 12.0, 53.5], [1.0, 10.8, 37.5], 0.92);
+    relaxed_palm_hand([1.0, 10.8, 37.5], 1, 0.92);
     translate([0.4, 0, 81.2]) rotate([0, 4, 0]) character_head("sahadeva");
 }
 
@@ -518,11 +637,13 @@ module draupadi() {
         }
         draupadi_saree();
         for (s = [-1, 1]) {
-            sculpted_arm([0, s * 9.2, 69.5], [2.4, s * 10.2, 55.0], [8.6, s * 1.8, 60.0], [10.5, s * 0.6, 65.0], 0.80);
+            sculpted_arm([0, s * 9.2, 69.5], [2.4, s * 10.2, 55.0], [8.4, s * 1.4, 60.0], 0.80);
         }
+        namaste_palms([8.6, 0, 60.0], 0.80);
         translate([0.4, 0, 80.0]) rotate([0, 4, 0]) character_head("draupadi");
     }
 }
+
 
 // 7. Dharma Dog - Faithful Canine Companion
 module dharma_dog() {
@@ -589,7 +710,7 @@ module flat_base(x0, x1, w, r = 4) {
 
 module trail() {
     flat_base(-100, 132, 46);
-    on_base( 86.0, 0, figure_rot, 0.8) dharma_dog();
+    on_base( 86.0, 0, figure_rot, 0.64) dharma_dog();
     on_base( 41.0) yudhishthira();
     on_base( 16.5) bhima();
     on_base( -8.0) arjuna();
