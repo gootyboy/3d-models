@@ -1,618 +1,609 @@
 // ====================================================================
-// AUTHENTIC SWARGAROHINI PILGRIMAGE: PANDAVAS & DHARMA DOG
-// Sculpted directly from high-resolution on-site statue photography
-// Key features from photo:
-//   - Flowing golden hair swept back over shoulders on all Pandavas
-//   - Muscular bare arms (deltoids, biceps, triceps, forearms)
-//   - Saffron shawls & cowls draped over chests & shoulders
-//   - Marigold flower garlands (Mala) around necks
-//   - Rich accordion dhoti pleats cascading down legs
-//   - Chiseled facial features with forehead Tilak ridges
-// Additive Manufacturing: 100% Manifold Solid, Supportless FDM Geometry
+// SWARGAROHINI - MANA PANDAVAS & DHARMA DOG
+// Authentic Sculptural Ensemble from Mana Village, Uttarakhand, India.
+//
+// Features:
+//   * Heroic Sculpted Faces: Straight classical nose, nostrils,
+//     cupid-bow lips, strong jawline, arched brows, tilak, ears.
+//   * Authentic Hair:
+//       - Yudhishthira: Short cropped ascetic hair with topknot.
+//       - Bhima & Arjuna: Voluminous long hair cascading over shoulders.
+//       - Nakula & Sahadeva: Handsome long heroic locks.
+//       - Draupadi: Gracefully draped saree pallu veil over head.
+//   * Muscular Anatomy:
+//       - Bhima: Massive chiseled pectorals, defined abdominals,
+//         bulging deltoids & biceps, orange neck cowl with knot.
+//       - Yudhishthira: Royal orange shawl over shoulder, marigold garland.
+//       - Solid pleated dhotis & sarees grounded directly into flat 2 mm base.
+//   * Additive Manufacturing: 100% Solid Manifold, Supportless FDM.
 // ====================================================================
 
-$fn = 36;
-eps = 0.02;
+$fn = 32;
+base_h = 2.0;
+fs = 0.85; // figure scale: ~95 design units -> ~81 mm
 
-// Selection parameter
-char_select = "procession_trail"; // ["procession_trail", "dog", "yudhishthira", "bhima", "arjuna", "all_statues_kit"]
+char_select = "trail"; // ["trail", "dog", "yudhishthira", "bhima", "arjuna", "nakula", "sahadeva", "draupadi"]
 
-base_h = 2.0; // Standard 2.0mm thin flat plinth
-
-render_selection();
-
-module render_selection() {
-    if (char_select == "procession_trail") {
-        scenic_procession_trail();
-    } else if (char_select == "dog") {
-        figure_pedestal(44, 22);
-        translate([0, 0, base_h]) detailed_dharma_dog();
-    } else if (char_select == "yudhishthira") {
-        figure_pedestal(26, 22);
-        translate([0, 0, base_h]) detailed_yudhishthira();
-    } else if (char_select == "bhima") {
-        figure_pedestal(30, 24);
-        translate([0, 0, base_h]) detailed_bhima();
-    } else if (char_select == "arjuna") {
-        figure_pedestal(26, 22);
-        translate([0, 0, base_h]) detailed_arjuna();
-    } else if (char_select == "all_statues_kit") {
-        all_statues_kit();
-    }
+// Core geometric helpers
+module ell(c, r, f = 28) { translate(c) scale(r) sphere(r = 1, $fn = f); }
+module seg(a, ra, b, rb, f = 20) {
+    hull() { translate(a) sphere(r = ra, $fn = f); translate(b) sphere(r = rb, $fn = f); }
 }
 
-// Flat thin pedestal matching photo
-module figure_pedestal(w = 26, d = 22) {
+// ===================== HEROIC STATUE HEAD =====================
+module statue_face(has_mustache = false, is_female = false) {
+    // 1. Rear cranium (anatomical proportions, behind x = 0)
     hull() {
-        translate([-w/2 + 2, -d/2 + 2, 0]) cylinder(r = 2, h = base_h, $fn = 20);
-        translate([ w/2 - 2, -d/2 + 2, 0]) cylinder(r = 2, h = base_h, $fn = 20);
-        translate([ w/2 - 2,  d/2 - 2, 0]) cylinder(r = 2, h = base_h, $fn = 20);
-        translate([-w/2 + 2,  d/2 - 2, 0]) cylinder(r = 2, h = base_h, $fn = 20);
+        ell([-1.2, 0, 3.4], [3.2, 3.6, 3.2]);
+        ell([-1.6, 0, 0.0], [3.4, 3.8, 3.6]);
+        ell([-1.2, 0, -3.2], [2.8, 3.4, 3.0]);
+    }
+
+    // 2. Forehead (smooth, rounded noble forehead)
+    hull() {
+        ell([0.8, 0, 3.8], [2.2, 3.0, 1.8]);
+        ell([1.6, 0, 2.2], [1.8, 2.8, 1.4]);
+        ell([0.0, 0, 2.6], [2.4, 3.2, 2.0]);
+    }
+
+    // 3. Sacred Tilak mark on forehead
+    if (!is_female) {
+        ell([2.5, 0, 2.8], [0.5, 0.3, 1.1], 16);
+    } else {
+        // Bindi / Maang tikka for Draupadi
+        ell([2.5, 0, 2.4], [0.5, 0.5, 0.5], 16);
+    }
+
+    // 4. Arched Brow Ridge
+    hull() {
+        ell([2.4, 0, 1.6], [1.1, 0.9, 0.7]); // glabella
+        for (s = [-1, 1]) {
+            ell([2.1, s * 1.4, 1.7], [1.0, 1.2, 0.65]); // arched apex
+            ell([1.4, s * 2.6, 1.3], [0.9, 1.0, 0.6]);  // soft tail
+        }
+    }
+
+    // 5. Almond Eyes with subtle lids
+    for (s = [-1, 1]) {
+        translate([1.8, s * 1.5, 0.6]) rotate([0, 12, s * 6]) {
+            ell([0, 0, 0], [0.8, 1.1, 0.6], 18); // eye volume
+            translate([0.15, 0, 0.22]) ell([0, 0, 0], [0.75, 1.15, 0.35], 16); // upper lid
+            translate([0.1, 0, -0.2]) ell([0, 0, 0], [0.7, 1.05, 0.3], 16); // lower lid
+        }
+    }
+
+    // 6. Natural Cheeks (smooth, blended, not blocky)
+    for (s = [-1, 1]) {
+        hull() {
+            ell([1.5, s * 2.4, 0.8], [1.1, 1.1, 0.8]);
+            ell([1.8, s * 2.2, -0.2], [1.2, 1.2, 1.2]); // cheek apex
+            ell([1.5, s * 1.5, -0.8], [1.3, 1.2, 1.2]); // medial cheek
+            ell([1.0, s * 2.8, -1.8], [1.4, 1.1, 1.4]); // lateral cheek
+            ell([0.0, s * 2.6, -1.0], [1.8, 1.2, 1.6]); // smooth into skull
+        }
+    }
+
+    // 7. Straight Noble Classical Nose
+    hull() {
+        ell([2.4, 0, 1.4], [0.8, 0.55, 0.5]); // nasion
+        ell([3.0, 0, 0.4], [0.85, 0.55, 0.8]); // bridge
+        ell([3.5, 0, -0.8], [0.9, 0.6, 0.8]); // lower bridge
+        ell([3.8, 0, -1.6], [0.85, 0.7, 0.7]); // rounded tip
+    }
+    // Nostrils (alar wings)
+    for (s = [-1, 1]) {
+        hull() {
+            ell([3.2, s * 0.75, -1.65], [0.7, 0.5, 0.5]);
+            ell([2.6, s * 0.95, -1.75], [0.8, 0.5, 0.5]);
+        }
+    }
+
+    // 8. Philtrum & Mouth
+    hull() {
+        ell([2.7, 0, -2.1], [0.8, 0.7, 0.4]);
+        ell([2.9, 0, -2.7], [0.8, 0.9, 0.4]);
+    }
+    // Upper lip (serene, noble curve)
+    hull() {
+        ell([3.25, 0, -2.85], [0.7, 0.4, 0.4]);
+        for (s = [-1, 1]) {
+            ell([3.35, s * 0.5, -2.8], [0.65, 0.4, 0.35]);
+            ell([2.7, s * 1.3, -3.0], [0.6, 0.45, 0.3]);
+        }
+    }
+    // Royal Mustache (for warrior princes)
+    if (has_mustache) {
+        for (s = [-1, 1]) {
+            hull() {
+                ell([3.3, s * 0.4, -2.65], [0.6, 0.5, 0.4]);
+                ell([3.2, s * 1.3, -2.75], [0.6, 0.7, 0.35]);
+                ell([2.8, s * 2.2, -3.1], [0.5, 0.5, 0.3]); // curled tip
+            }
+        }
+    }
+    // Lower lip (supported, gentle closed smile)
+    hull() {
+        ell([3.15, 0, -3.45], [0.8, 1.0, 0.5]);
+        for (s = [-1, 1]) ell([2.7, s * 1.0, -3.35], [0.6, 0.5, 0.35]);
+    }
+
+    // 9. Handsome Chin
+    hull() {
+        ell([2.5, 0, -4.1], [0.8, 1.1, 0.4]); // crease
+        ell([3.0, 0, -4.9], [1.0, is_female ? 1.2 : 1.4, 0.8]); // chin front
+        ell([2.3, 0, -5.6], [1.1, 1.2, 0.65]); // chin base
+        for (s = [-1, 1]) {
+            ell([2.7, s * 0.9, -4.9], [0.9, 0.8, 0.7]);
+            ell([1.8, s * 1.6, -5.2], [1.0, 0.8, 0.65]);
+        }
+    }
+
+    // 10. Mandible & Jawbone
+    for (s = [-1, 1]) {
+        hull() {
+            ell([2.7, s * 0.9, -4.9], [0.9, 0.8, 0.7]);
+            ell([1.4, s * 2.2, -4.5], [1.2, 1.0, 0.85]);
+            ell([-0.4, s * 3.0, -3.5], [1.3, 1.0, 1.0]); // gonion
+            ell([-0.6, s * 3.0, -1.2], [1.2, 1.0, 1.2]);
+        }
+        // Smooth cheek to jaw transition
+        hull() {
+            ell([1.8, s * 2.2, -0.2], [1.2, 1.2, 1.2]);
+            ell([1.4, s * 2.2, -4.5], [1.2, 1.0, 0.85]);
+            ell([2.2, s * 1.2, -2.4], [0.9, 0.8, 0.8]);
+        }
+    }
+
+    // 11. Sculpted Ears
+    for (s = [-1, 1]) {
+        translate([-0.5, s * 3.3, -0.6]) rotate([4, 6, s * 8]) {
+            hull() {
+                ell([0, 0, 1.0], [0.65, 0.45, 0.95]);
+                ell([0.2, 0, -0.2], [0.75, 0.5, 0.95]);
+                ell([0.05, 0, -1.2], [0.55, 0.45, 0.75]);
+            }
+        }
+    }
+
+    // 12. Muscular Neck connecting naturally into Trapezius and Torso
+    hull() {
+        ell([-0.3, 0, -3.2], [2.4, 2.6, 1.6]);
+        ell([-0.2, 0, -5.8], [2.8, 3.0, 1.8]);
+        ell([ 0.0, 0, -8.0], [3.6, 4.2, 2.0]);
+        // Trapezius slope backwards and laterally
+        ell([-2.0, 0, -6.5], [2.6, 3.6, 1.8]);
+        ell([-2.6, 0, -9.0], [3.0, 5.4, 2.0]);
+        for (s = [-1, 1]) ell([-1.2, s * 4.6, -8.5], [2.2, 2.4, 1.8]);
     }
 }
 
-// ====================================================================
-// 1. THE FAITHFUL DHARMA DOG
-// ====================================================================
-module detailed_dharma_dog() {
-    union() {
-        // Legs & Paws
+// Yudhishthira: Short cropped hair with ascetic knot
+module hair_yudhishthira() {
+    hull() {
+        ell([-1.0, 0, 3.2], [3.6, 3.8, 3.2]);
+        ell([-1.5, 0, 0.4], [3.8, 3.9, 3.4]);
+        ell([-1.4, 0, -2.6], [3.4, 3.6, 2.8]);
+        ell([0.4, 0, 3.6], [3.0, 3.2, 2.0]);
+    }
+    // Ascetic Topknot / crown
+    hull() {
+        ell([-0.3, 0, 5.6], [1.7, 1.7, 1.4]);
+        ell([-0.3, 0, 6.6], [1.0, 1.0, 0.9]);
+    }
+}
+
+// Bhima & Arjuna: Voluminous heroic flowing hair over shoulders
+module hair_flowing() {
+    hair_yudhishthira();
+    // Flowing mane down the back
+    hull() {
+        ell([-2.0, 0, -1.5], [3.2, 3.8, 3.0]);
+        ell([-2.6, 0, -6.5], [3.4, 4.6, 3.4]);
+        ell([-3.0, 0, -10.5], [3.4, 5.4, 3.4]);
+    }
+    // Flowing wavy locks over shoulders
+    for (s = [-1, 1]) {
+        hull() {
+            ell([-0.5, s * 3.6, -2.0], [1.3, 1.2, 2.0]);
+            ell([ 0.0, s * 4.2, -5.8], [1.5, 1.4, 2.4]);
+            ell([ 0.5, s * 4.6, -9.5], [1.5, 1.5, 2.4]);
+        }
+    }
+}
+
+// Draupadi: Saree Pallu Veil draped over head and shoulders
+module hair_veil() {
+    hull() {
+        ell([-0.8, 0, 3.6], [3.8, 4.0, 3.4]);
+        ell([-1.4, 0, 0.4], [4.0, 4.2, 3.6]);
+        ell([-1.6, 0, -3.0], [3.8, 4.0, 3.2]);
+        ell([ 0.6, 0, 3.6], [3.2, 3.4, 2.0]);
+    }
+    // Veil drape falling gracefully down back and sides
+    hull() {
+        ell([-2.2, 0, -1.5], [3.4, 4.2, 3.2]);
+        ell([-2.8, 0, -6.5], [3.6, 4.8, 3.4]);
+        ell([-3.2, 0, -11.0], [3.6, 5.6, 3.4]);
+    }
+    for (s = [-1, 1]) {
+        hull() {
+            ell([-0.4, s * 3.8, -1.8], [1.4, 1.3, 2.2]);
+            ell([ 0.1, s * 4.4, -5.8], [1.6, 1.5, 2.5]);
+            ell([ 0.6, s * 4.8, -9.8], [1.6, 1.6, 2.5]);
+        }
+    }
+}
+
+module character_head(type = "yudhishthira") {
+    if (type == "yudhishthira") {
+        statue_face(has_mustache = true, is_female = false);
+        hair_yudhishthira();
+    } else if (type == "bhima") {
+        statue_face(has_mustache = true, is_female = false);
+        hair_flowing();
+    } else if (type == "arjuna") {
+        statue_face(has_mustache = false, is_female = false);
+        hair_flowing();
+    } else if (type == "draupadi") {
+        statue_face(has_mustache = false, is_female = true);
+        hair_veil();
+    } else {
+        statue_face(has_mustache = false, is_female = false);
+        hair_flowing();
+    }
+}
+
+// ===================== BODY ANATOMY =====================
+// Muscular heroic torso
+module athletic_torso(bulk = 1.0, is_bare = true) {
+    hull() {
+        ell([0.0, 0, 49.0], [6.2, 8.4 * bulk, 3.0]); // waist
+        ell([0.2, 0, 57.0], [6.8, 9.6 * bulk, 4.2]); // mid ribs
+        ell([0.6, 0, 66.0], [7.6, 11.6 * bulk, 5.0]); // chest
+        ell([0.0, 0, 72.5], [6.2, 12.2 * bulk, 3.5]); // upper chest
+    }
+    // Trapezius and neck anchorage
+    hull() {
+        ell([-1.0, 0, 72.0], [5.0, 7.5 * bulk, 3.0]);
+        ell([-0.4, 0, 76.5], [4.2, 5.0 * bulk, 2.5]);
+    }
+    // Smooth, realistic sculpted musculature (no isolated balls)
+    if (is_bare) {
+        for (s = [-1, 1]) {
+            // Sculpted Pectoralis Major slab
+            hull() {
+                ell([4.6, s * 1.8 * bulk, 66.5], [2.2, 3.2 * bulk, 2.8]);
+                ell([5.0, s * 5.0 * bulk, 65.5], [2.0, 4.0 * bulk, 3.2]);
+                ell([3.6, s * 4.6 * bulk, 62.5], [1.8, 3.6 * bulk, 1.8]);
+            }
+            // Clavicle bone ridge
+            ell([4.2, s * 3.6, 71.8], [0.9, 3.4, 0.7]);
+            // Subtle anatomical abdominal pads
+            for (k = [0 : 2]) {
+                ell([4.8, s * 2.0 * bulk, 53.0 + k * 3.2], [1.1, 1.7 * bulk, 1.2]);
+            }
+        }
+    }
+}
+
+// Solid flowing dhoti with crisp surface pleats (grounded to z = 0)
+module pleated_dhoti() {
+    hull() {
+        ell([0.0, 0, 49.0], [6.8, 9.2, 2.5]);
+        ell([0.4, 0, 26.0], [7.8, 10.4, 2.0]);
+        ell([0.6, 0, 0.0], [8.8, 11.5, 2.5]); // grounded
+    }
+    // Waistband sash
+    ell([0.3, 0, 50.0], [7.2, 9.6, 1.6]);
+    // Subtle crisp surface pleats
+    for (i = [-5 : 5]) {
+        a = i * 16;
+        hull() {
+            ell([0.4 + 7.4 * cos(a), 9.4 * sin(a), 47.0], [0.55, 0.55, 1.0]);
+            ell([0.6 + 8.4 * cos(a), 10.8 * sin(a), 1.0], [0.65, 0.65, 1.5]);
+        }
+    }
+    // Central cascading fan pleats (Kaccha / Patta)
+    for (j = [-2 : 2]) {
+        hull() {
+            ell([7.6, j * 1.4, 48.0], [0.9, 0.9, 1.4]);
+            ell([9.2, j * 2.2, 1.0], [1.1, 1.1, 1.6]);
+        }
+    }
+    // Feet embedded into base
+    for (s = [-1, 1]) {
+        ell([8.0, s * 4.4, 1.2], [3.6, 2.4, 2.2]);
+    }
+}
+
+// Draupadi's graceful saree
+module draupadi_saree() {
+    hull() {
+        ell([0.0, 0, 46.0], [5.8, 7.8, 2.5]);
+        ell([0.4, 0, 24.0], [7.0, 9.0, 2.0]);
+        ell([0.6, 0, 0.0], [8.0, 10.2, 2.5]); // reaches z = 0
+    }
+    // Saree pleats
+    for (i = [-4 : 4]) {
+        a = i * 18;
+        hull() {
+            ell([0.3 + 6.6 * cos(a), 8.4 * sin(a), 44.0], [0.55, 0.55, 1.0]);
+            ell([0.5 + 7.6 * cos(a), 9.8 * sin(a), 1.0], [0.65, 0.65, 1.4]);
+        }
+    }
+    // Saree pallu drape wrapping around waist
+    hull() {
+        ell([5.6, 1.8, 47.0], [1.4, 4.2, 1.8]);
+        ell([6.2, -2.4, 30.0], [1.6, 3.8, 1.8]);
+        ell([7.0, -3.2, 2.0], [1.8, 4.0, 2.2]);
+    }
+    for (s = [-1, 1]) ell([7.4, s * 3.8, 1.2], [3.2, 2.2, 2.0]);
+}
+
+// Muscular arm with defined deltoid, bicep, forearm, and hand
+module sculpted_arm(S, E, W, H, scale_arm = 1.0) {
+    k = scale_arm;
+    // Deltoid cap
+    ell(S, [4.0 * k, 3.8 * k, 4.5 * k], 22);
+    // Upper arm
+    hull() {
+        ell(S, [3.6 * k, 3.4 * k, 3.2 * k], 20);
+        translate(S + 0.42 * (E - S) + [0.8 * k, 0, 0])
+            sphere(r = 3.2 * k, $fn = 20); // bicep bulge
+        translate(E) sphere(r = 2.5 * k, $fn = 20); // elbow
+    }
+    // Forearm
+    hull() {
+        translate(E) sphere(r = 2.5 * k, $fn = 20);
+        translate(E + 0.35 * (W - E)) sphere(r = 2.6 * k, $fn = 20);
+        translate(W) sphere(r = 1.85 * k, $fn = 18);
+    }
+    // Hand
+    hull() {
+        translate(W) sphere(r = 1.85 * k, $fn = 16);
+        ell(H, [1.4 * k, 1.2 * k, 1.7 * k], 16);
+    }
+}
+
+// Royal orange shawl draped over one shoulder
+module royal_shawl_shoulder(side = -1) {
+    s = side;
+    // Shoulder drape
+    hull() {
+        ell([-0.5, s * 11.2, 71.5], [5.6, 6.4, 4.5]);
+        ell([-0.5, 0, 75.0], [4.8, 7.6, 2.2]);
+        ell([1.5, s * 4.8, 63.0], [7.0, 7.4, 8.0]);
+    }
+    // Hanging cape at back
+    hull() {
+        ell([-4.8, s * 7.2, 67.0], [2.6, 7.4, 7.5]);
+        ell([-5.2, s * 10.0, 48.0], [2.6, 5.8, 10.5]);
+    }
+    // Diagonal chest fall
+    hull() {
+        ell([1.5, s * 4.8, 63.0], [7.0, 7.4, 8.0]);
+        ell([2.2, -s * 2.8, 51.0], [6.6, 5.2, 3.6]);
+    }
+}
+
+// Royal orange shawl over both shoulders (Nakula / Sahadeva)
+module royal_shawl_both() {
+    hull() {
+        for (s = [-1, 1]) ell([-0.5, s * 10.8, 71.0], [5.6, 6.4, 4.5]);
+        ell([-0.5, 0, 75.0], [4.8, 7.6, 2.2]);
+        ell([1.6, 0, 63.0], [7.4, 11.0, 8.5]);
+    }
+    hull() {
+        ell([-4.8, 0, 67.0], [2.6, 10.5, 7.5]);
+        ell([-5.2, 0, 49.0], [2.6, 9.5, 10.5]);
+    }
+}
+
+// Orange neck cowl with knotted tie (Bhima)
+module bhima_scarf_cowl() {
+    difference() {
+        ell([-0.2, 0, 74.5], [5.6, 6.5, 2.6]);
+        ell([-0.2, 0, 74.5], [3.2, 3.4, 5.0]);
+    }
+    // Knot & tie
+    ell([5.6, 0, 73.0], [1.9, 2.1, 1.7], 18);
+    for (s = [-1, 1]) {
+        hull() {
+            ell([5.6, s * 0.85, 72.2], [1.3, 1.7, 0.9], 16);
+            ell([7.0, s * 2.1, 63.0], [1.2, 1.9, 0.85], 16);
+        }
+    }
+}
+
+// Yellow marigold garland (Yudhishthira)
+module marigold_garland() {
+    N = 36;
+    for (i = [0 : N]) {
+        t = -1 + 2 * i / N;
+        a = t * 85;
+        z = 72.5 - 10.5 * pow(max(0, 1 - t * t), 1.1);
+        ell([8.4 - 6.5 * t * t, 6.8 * sin(a), z], [1.2, 1.2, 1.2], 14);
+    }
+    ell([9.2, 0, 60.5], [1.5, 1.4, 2.0], 14);
+}
+
+// Hanging cloth sash held in hand
+module cloth_drape(y = 6.0, ztop = 50.0, zbot = 32.0, w = 3.4) {
+    hull() {
+        ell([8.2, y, ztop], [1.4, w, 1.1], 16);
+        ell([8.5, y, zbot], [1.5, w * 1.1, 1.1], 16);
+    }
+    for (k = [-1, 0, 1]) {
+        hull() {
+            ell([9.1, y + k * w * 0.6, ztop - 1], [0.9, 0.75, 0.9], 12);
+            ell([9.4, y + k * w * 0.65, zbot + 1], [0.9, 0.75, 0.9], 12);
+        }
+    }
+}
+
+// ===================== INDIVIDUAL CHARACTERS =====================
+
+// 1. Yudhishthira - Righteous King
+module yudhishthira() {
+    athletic_torso(1.0, true);
+    pleated_dhoti();
+    royal_shawl_shoulder(-1);
+    marigold_garland();
+    sculpted_arm([0, -11.0, 71.0], [-0.5, -12.5, 53.5], [1.0, -11.4, 37.0], [1.8, -11.2, 30.0], 1.0);
+    sculpted_arm([0,  11.0, 71.0], [-0.5,  13.0, 54.5], [7.8,   7.2, 51.5], [9.8,   5.0, 51.0], 1.0);
+    cloth_drape(6.0, 50.0, 32.0);
+    translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("yudhishthira");
+}
+
+// 2. Bhima - Colossal Warrior
+module bhima() {
+    athletic_torso(1.18, true);
+    pleated_dhoti();
+    bhima_scarf_cowl();
+    sculpted_arm([0, -12.4, 71.0], [-0.5, -14.6, 55.0], [8.8, -7.2, 52.0], [11.0, -4.8, 51.5], 1.16);
+    sculpted_arm([0,  12.4, 71.0], [-1.8,  17.0, 56.0], [3.0, 11.2, 48.5], [4.8,  9.2, 46.5], 1.16);
+    translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("bhima");
+}
+
+// 3. Arjuna - Heroic Archer
+module arjuna() {
+    athletic_torso(0.98, true);
+    pleated_dhoti();
+    royal_shawl_shoulder(1);
+    sculpted_arm([0, -10.6, 71.0], [-0.5, -12.2, 53.5], [1.0, -11.0, 37.0], [1.8, -10.8, 30.0], 0.96);
+    sculpted_arm([0,  10.6, 71.0], [-0.5,  12.5, 54.5], [8.0,  6.0, 52.0], [10.0, 4.0, 51.5], 0.96);
+    cloth_drape(-5.0, 50.0, 32.0);
+    translate([0.4, 0, 81.5]) rotate([0, 4, 0]) character_head("arjuna");
+}
+
+// 4. Nakula - Handsome Prince
+module nakula() {
+    athletic_torso(0.93, false);
+    pleated_dhoti();
+    royal_shawl_both();
+    for (s = [-1, 1]) {
+        sculpted_arm([0, s * 10.2, 70.5], [2.6, s * 11.5, 55.0], [9.2, s * 1.9, 60.5], [11.0, s * 0.7, 65.5], 0.92);
+    }
+    translate([0.4, 0, 81.2]) rotate([0, 4, 0]) character_head("nakula");
+}
+
+// 5. Sahadeva - Wise Prince
+module sahadeva() {
+    athletic_torso(0.93, true);
+    pleated_dhoti();
+    royal_shawl_shoulder(-1);
+    sculpted_arm([0, -10.2, 70.5], [2.0, -11.5, 54.5], [8.8, -4.2, 59.5], [10.5, -2.8, 64.0], 0.92);
+    sculpted_arm([0,  10.2, 70.5], [-0.5, 12.0, 53.5], [1.0, 10.8, 37.5], [1.8, 10.6, 30.5], 0.92);
+    translate([0.4, 0, 81.2]) rotate([0, 4, 0]) character_head("sahadeva");
+}
+
+// 6. Draupadi - Empress Panchali
+module draupadi() {
+    scale(0.94) {
+        hull() {
+            ell([0.0, 0, 47.0], [5.0, 6.8, 2.5]);
+            ell([0.3, 0, 55.0], [5.4, 7.6, 3.5]);
+            ell([0.6, 0, 64.0], [6.2, 8.8, 4.0]);
+            ell([0.0, 0, 70.5], [5.2, 9.2, 3.0]);
+        }
+        for (s = [-1, 1]) ell([4.6, s * 3.2, 63.5], [2.5, 3.0, 2.8]); // bust
+        hull() {
+            ell([-0.3, 0, 72.0], [3.4, 3.6, 2.8]);
+            ell([-0.2, 0, 75.5], [2.8, 3.0, 2.0]);
+        }
+        draupadi_saree();
+        for (s = [-1, 1]) {
+            sculpted_arm([0, s * 9.2, 69.5], [2.4, s * 10.2, 55.0], [8.6, s * 1.8, 60.0], [10.5, s * 0.6, 65.0], 0.80);
+        }
+        translate([0.4, 0, 80.0]) rotate([0, 4, 0]) character_head("draupadi");
+    }
+}
+
+// 7. Dharma Dog - Faithful Canine Companion
+module dharma_dog() {
+    scale(1.45) union() {
         for (sy = [-4.0, 4.0]) {
+            hull() { ell([8.5, sy * 0.85, 15.0], [2.6, 2.6, 2.6], 16); ell([9.0, sy, 9.5], [2.0, 2.0, 2.0], 16); }
+            hull() { ell([9.0, sy, 9.5], [2.0, 2.0, 2.0], 16); ell([9.5, sy, 3.2], [1.6, 1.6, 1.6], 14); }
             hull() {
-                translate([8.5, sy * 0.85, 15.0]) sphere(r = 2.6, $fn = 16);
-                translate([9.0, sy, 9.5]) sphere(r = 2.0, $fn = 16);
-            }
-            hull() {
-                translate([9.0, sy, 9.5]) sphere(r = 2.0, $fn = 16);
-                translate([9.5, sy, 3.2]) sphere(r = 1.6, $fn = 14);
-            }
-            hull() {
-                translate([9.5, sy, 3.2]) sphere(r = 1.6, $fn = 14);
-                translate([11.2, sy, 0.6]) scale([1.4, 1.1, 0.7]) sphere(r = 1.8, $fn = 16);
-                translate([8.8, sy, 0.0]) cylinder(r = 1.9, h = 1.4, $fn = 16);
-            }
-            for (ti = [-1.0, 0.0, 1.0]) {
-                translate([12.4, sy + ti * 0.75, 0.4]) scale([1.1, 0.7, 0.7]) sphere(r = 0.75, $fn = 10);
+                ell([9.5, sy, 3.2], [1.6, 1.6, 1.6], 14);
+                ell([11.2, sy, 0.0], [2.5, 2.0, 1.4], 16);
             }
         }
         for (sy = [-4.4, 4.4]) {
+            hull() { ell([-9.0, sy * 0.8, 16.0], [4.7, 3.2, 4.0], 18); ell([-10.5, sy, 10.5], [2.5, 2.5, 2.5], 16); }
+            hull() { ell([-10.5, sy, 10.5], [2.5, 2.5, 2.5], 16); ell([-12.5, sy, 6.5], [1.8, 1.8, 1.8], 14); ell([-8.5, sy, 3.0], [1.5, 1.5, 1.5], 14); }
             hull() {
-                translate([-9.0, sy * 0.8, 16.0]) scale([1.3, 0.9, 1.1]) sphere(r = 3.6, $fn = 18);
-                translate([-10.5, sy, 10.5]) sphere(r = 2.5, $fn = 16);
-            }
-            hull() {
-                translate([-10.5, sy, 10.5]) sphere(r = 2.5, $fn = 16);
-                translate([-12.5, sy, 6.5]) sphere(r = 1.8, $fn = 14);
-                translate([-8.5, sy, 3.0]) sphere(r = 1.5, $fn = 14);
-            }
-            hull() {
-                translate([-8.5, sy, 3.0]) sphere(r = 1.5, $fn = 14);
-                translate([-7.2, sy, 0.6]) scale([1.3, 1.1, 0.7]) sphere(r = 1.8, $fn = 16);
-                translate([-9.0, sy, 0.0]) cylinder(r = 1.9, h = 1.4, $fn = 16);
+                ell([-8.5, sy, 3.0], [1.5, 1.5, 1.5], 14);
+                ell([-7.2, sy, 0.0], [2.3, 2.0, 1.3], 16);
             }
         }
+        hull() {
+            ell([8.0, 0, 15.0], [6.2, 5.0, 5.6], 22);
+            ell([2.0, 0, 15.5], [6.0, 4.0, 5.0], 22);
+            ell([-4.5, 0, 16.0], [4.4, 3.1, 4.0], 20);
+            ell([-9.0, 0, 16.5], [5.3, 3.8, 4.8], 20);
+        }
+        hull() { ell([7.5, 0, 15.5], [4.8, 4.8, 4.8], 20); ell([12.5, 0, 22.5], [3.8, 3.8, 3.8], 20); }
+        translate([11.5, 0, 20.0]) rotate([0, 35, 0]) {
+            difference() {
+                cylinder(r1 = 5.2, r2 = 4.6, h = 4.2, center = true, $fn = 26);
+                cylinder(r = 3.6, h = 5.0, center = true, $fn = 22);
+            }
+            translate([0, -4.0, -1.0]) rotate([25, 0, 15]) {
+                ell([0, 0, 0], [2.8, 2.0, 2.2], 16);
+                translate([0.5, -1.0, -3.2]) cylinder(r1 = 1.6, r2 = 0.8, h = 3.4, $fn = 12);
+            }
+        }
+        hull() { ell([14.0, 0, 25.0], [4.0, 4.0, 4.0], 22); ell([16.5, 0, 24.0], [3.2, 3.2, 3.2], 20); }
+        hull() { ell([16.0, 0, 24.5], [2.8, 2.8, 2.8], 18); ell([21.0, 0, 22.2], [1.8, 1.8, 1.8], 16); ell([22.8, 0, 21.8], [1.1, 1.1, 1.1], 12); }
+        hull() { ell([16.5, 0, 22.2], [2.1, 2.1, 2.1], 14); ell([20.5, 0, 20.4], [1.3, 1.3, 1.3], 12); }
+        for (sy = [-1, 1]) hull() {
+            ell([13.5, sy * 3.4, 27.5], [1.4, 1.4, 1.4], 12);
+            ell([14.8, sy * 5.0, 26.5], [1.6, 1.6, 1.6], 12);
+            ell([17.2, sy * 4.6, 23.8], [1.1, 1.1, 1.1], 10);
+        }
+        hull() { ell([-12.0, 0, 18.0], [2.0, 2.0, 2.0], 12); ell([-15.0, 0, 21.5], [1.6, 1.6, 1.6], 12); }
+        hull() { ell([-15.0, 0, 21.5], [1.6, 1.6, 1.6], 12); ell([-14.0, 0, 26.0], [1.3, 1.3, 1.3], 10); }
+        hull() { ell([-14.0, 0, 26.0], [1.3, 1.3, 1.3], 10); ell([-10.5, 0, 29.0], [1.0, 1.0, 1.0], 8); }
+    }
+}
 
-        // Torso & Neck
-        hull() {
-            translate([8.0, 0, 15.0]) scale([1.1, 0.9, 1.0]) sphere(r = 5.6, $fn = 22);
-            translate([2.0, 0, 15.5]) scale([1.2, 0.8, 1.0]) sphere(r = 5.0, $fn = 22);
-            translate([-4.5, 0, 16.0]) scale([1.0, 0.7, 0.9]) sphere(r = 4.4, $fn = 20);
-            translate([-9.0, 0, 16.5]) scale([1.1, 0.8, 1.0]) sphere(r = 4.8, $fn = 20);
-        }
-        hull() {
-            translate([7.5, 0, 15.5]) sphere(r = 4.8, $fn = 20);
-            translate([12.5, 0, 22.5]) sphere(r = 3.8, $fn = 20);
-        }
+// ===================== SCENE ASSEMBLY =====================
+module on_base(x, y = 0, rot = -35, s = fs) {
+    translate([x, y, base_h]) rotate([0, 0, rot]) scale(s) children();
+}
 
-        // Orange Scarf / Bandana with Knot
-        translate([11.5, 0, 20.0]) {
-            rotate([0, 35, 0]) {
-                difference() {
-                    cylinder(r1 = 5.2, r2 = 4.6, h = 4.2, center = true, $fn = 26);
-                    cylinder(r = 3.6, h = 5.0, center = true, $fn = 22);
-                }
-                translate([0, -4.0, -1.0]) {
-                    rotate([25, 0, 15]) {
-                        scale([1.3, 0.9, 1.1]) sphere(r = 2.2, $fn = 16);
-                        translate([0.6, -1.0, -3.4]) cylinder(r1 = 1.8, r2 = 0.8, h = 3.6, $fn = 12);
-                    }
-                }
-            }
-        }
-
-        // Head & Muzzle
-        hull() {
-            translate([14.0, 0, 25.0]) sphere(r = 4.0, $fn = 22);
-            translate([16.5, 0, 24.0]) sphere(r = 3.2, $fn = 20);
-        }
-        hull() {
-            translate([16.0, 0, 24.5]) sphere(r = 2.8, $fn = 18);
-            translate([21.0, 0, 22.2]) sphere(r = 1.8, $fn = 16);
-            translate([22.8, 0, 21.8]) sphere(r = 1.1, $fn = 12);
-        }
-        hull() {
-            translate([16.5, 0, 22.2]) sphere(r = 2.1, $fn = 14);
-            translate([20.5, 0, 20.4]) sphere(r = 1.3, $fn = 12);
-        }
-        for (sy = [-1, 1]) {
-            hull() {
-                translate([13.5, sy * 3.4, 27.5]) sphere(r = 1.4, $fn = 12);
-                translate([14.8, sy * 5.0, 26.5]) sphere(r = 1.6, $fn = 12);
-                translate([17.2, sy * 4.6, 23.8]) sphere(r = 1.1, $fn = 10);
-            }
-        }
-        // Sickle Tail
-        hull() {
-            translate([-12.0, 0, 18.0]) sphere(r = 2.0, $fn = 12);
-            translate([-15.0, 0, 21.5]) sphere(r = 1.6, $fn = 12);
-        }
-        hull() {
-            translate([-15.0, 0, 21.5]) sphere(r = 1.6, $fn = 12);
-            translate([-14.0, 0, 26.0]) sphere(r = 1.3, $fn = 10);
-        }
-        hull() {
-            translate([-14.0, 0, 26.0]) sphere(r = 1.3, $fn = 10);
-            translate([-10.5, 0, 29.0]) sphere(r = 1.0, $fn = 8);
+module flat_base(x0, x1, w, r = 4) {
+    hull() {
+        for (px = [x0 + r, x1 - r], py = [-w / 2 + r, w / 2 - r]) {
+            translate([px, py, 0]) cylinder(r = r, h = base_h, $fn = 28);
         }
     }
 }
 
-// ====================================================================
-// 2. YUDHISHTHIRA (Leading Pandava King)
-// Photo Match:
-//   - Flowing golden hair swept back over shoulders
-//   - Right arm bare, muscular, extended downwards at side
-//   - Left arm bent across chest holding the draped orange shawl
-//   - Orange shawl covering right shoulder & chest, marigold mala
-//   - Prominent cascading vertical dhoti pleats
-// ====================================================================
-module detailed_yudhishthira() {
-    union() {
-        // Feet
-        hull() {
-            translate([3.0, 3.4, 0]) cylinder(r = 2.0, h = 1.4, $fn = 14);
-            translate([5.5, 3.4, 0.4]) scale([1.5, 1.0, 0.7]) sphere(r = 1.6, $fn = 12);
-        }
-        hull() {
-            translate([-1.2, -3.4, 0]) cylinder(r = 2.0, h = 1.4, $fn = 14);
-            translate([1.4, -3.4, 0.4]) scale([1.5, 1.0, 0.7]) sphere(r = 1.6, $fn = 12);
-        }
-
-        // Legs in Dhoti
-        hull() {
-            translate([3.0, 3.4, 1.2]) cylinder(r1 = 2.2, r2 = 2.6, h = 9.0, $fn = 16);
-            translate([2.0, 3.2, 10.5]) sphere(r = 2.6, $fn = 16);
-        }
-        hull() {
-            translate([2.0, 3.2, 10.5]) sphere(r = 2.6, $fn = 16);
-            translate([0.8, 2.8, 18.5]) cylinder(r1 = 2.8, r2 = 3.3, h = 4.5, $fn = 16);
-        }
-        hull() {
-            translate([-1.2, -3.4, 1.2]) cylinder(r1 = 2.2, r2 = 2.6, h = 9.0, $fn = 16);
-            translate([-0.6, -3.2, 10.5]) sphere(r = 2.6, $fn = 16);
-        }
-        hull() {
-            translate([-0.6, -3.2, 10.5]) sphere(r = 2.6, $fn = 16);
-            translate([0.0, -2.8, 18.5]) cylinder(r1 = 2.8, r2 = 3.3, h = 4.5, $fn = 16);
-        }
-
-        // Dhoti Cloth Bridge
-        hull() {
-            translate([1.0, -2.0, 2.0]) cube([1.8, 4.0, 17.0]);
-            translate([2.8, -1.4, 3.0]) cube([1.4, 2.8, 15.0]);
-        }
-        // Dense Vertical Accordion Dhoti Pleats (Exact match from photo!)
-        for (i = [0:6]) {
-            translate([3.2, -2.0 + i * 0.65, 2.5 + i * 2.4]) {
-                rotate([0, 12, 0])
-                    scale([0.8, 0.35, 1.4]) cylinder(r = 1.6, h = 3.6, $fn = 10);
-            }
-        }
-
-        // Waist wrap & buckle
-        hull() {
-            translate([0.4, 0, 18.0]) scale([1.05, 1.35, 1.0]) cylinder(r1 = 4.8, r2 = 4.4, h = 5.0, $fn = 22);
-        }
-
-        // Torso Core
-        hull() {
-            translate([0, 0, 21.0]) scale([1.0, 1.25, 1.0]) cylinder(r1 = 4.4, r2 = 5.6, h = 7.0, $fn = 24);
-            translate([0, 0, 28.0]) scale([1.05, 1.35, 1.0]) cylinder(r1 = 5.6, r2 = 4.8, h = 4.0, $fn = 24);
-        }
-
-        // --- ORANGE SHAWL & FLOWER GARLAND (From Photo) ---
-        // Saffron shawl draped over shoulders
-        hull() {
-            translate([0,  6.2, 30.5]) sphere(r = 2.8, $fn = 16);
-            translate([0, -6.2, 30.5]) sphere(r = 2.8, $fn = 16);
-            translate([-1.0, 0, 31.0]) sphere(r = 3.6, $fn = 20); // Back cape
-            translate([1.5, 0, 25.5]) scale([1.2, 1.3, 1.0]) sphere(r = 4.4, $fn = 20); // Chest drape
-        }
-        hull() {
-            translate([1.5, 0, 25.5]) scale([1.2, 1.3, 1.0]) sphere(r = 4.4, $fn = 20);
-            translate([1.8, 0, 20.0]) scale([1.1, 1.2, 0.85]) sphere(r = 3.4, $fn = 16);
-        }
-
-        // Marigold Mala Garland around neck (From photo!)
-        translate([2.0, 0, 30.0]) {
-            rotate([0, 48, 0]) {
-                difference() {
-                    cylinder(r1 = 5.2, r2 = 4.6, h = 2.2, center = true, $fn = 24);
-                    cylinder(r = 3.6, h = 3.0, center = true, $fn = 20);
-                }
-                translate([4.8, 0, -0.6]) scale([1.2, 0.9, 1.3]) sphere(r = 1.4, $fn = 12);
-            }
-        }
-
-        // --- BARE MUSCULAR RIGHT ARM (Extended Downwards as seen in photo!) ---
-        hull() {
-            translate([0, -6.6, 29.5]) sphere(r = 2.4, $fn = 16); // Deltoid
-            translate([0.8, -6.4, 23.0]) sphere(r = 2.0, $fn = 16); // Bicep
-        }
-        hull() {
-            translate([0.8, -6.4, 23.0]) sphere(r = 2.0, $fn = 16); // Elbow
-            translate([1.4, -5.8, 16.5]) sphere(r = 1.7, $fn = 14); // Forearm
-            translate([1.8, -5.2, 12.0]) sphere(r = 1.4, $fn = 12); // Bare hand at side
-        }
-
-        // --- LEFT ARM (Bent across holding shawl fold as seen in photo!) ---
-        hull() {
-            translate([0, 6.2, 29.5]) sphere(r = 2.4, $fn = 16);
-            translate([1.4, 5.0, 23.5]) sphere(r = 1.9, $fn = 14); // Elbow
-            translate([3.6, 0.0, 24.5]) sphere(r = 1.6, $fn = 12); // Hand holding shawl
-        }
-
-        // --- HEAD WITH FLOWING GOLDEN HAIR (From Photo!) ---
-        translate([0, 0, 33.5]) cylinder(r1 = 3.0, r2 = 2.6, h = 3.5, $fn = 16);
-
-        translate([0.5, 0, 38.0]) {
-            sphere(r = 3.2, $fn = 20);
-            // Face & Tilak
-            translate([2.4, 0, 0.8]) scale([1.1, 0.7, 1.0]) sphere(r = 1.0, $fn = 12); // Brow
-            translate([2.7, 0, 1.4]) cube([0.6, 0.4, 1.2], center = true); // Tilak mark on forehead!
-            translate([3.2, 0, 0.2]) scale([1.4, 0.6, 0.9]) sphere(r = 0.8, $fn = 10); // Nose
-            translate([2.4, 0, -1.1]) scale([1.1, 1.3, 1.0]) sphere(r = 1.5, $fn = 14); // Beard
-
-            // Long flowing hair swept back over shoulders (Exact match from photo!)
-            translate([-1.8, 0, -1.5]) {
-                hull() {
-                    scale([1.1, 1.4, 1.2]) sphere(r = 2.6, $fn = 16);
-                    translate([-0.5, 0, -4.5]) scale([0.9, 1.35, 1.0]) sphere(r = 2.2, $fn = 14);
-                }
-            }
-            // Side locks framing face
-            for (sy = [-2.6, 2.6]) {
-                translate([0.2, sy, -1.5])
-                    scale([0.8, 0.6, 1.5]) sphere(r = 1.4, $fn = 12);
-            }
-            // Regal topknot bun
-            translate([-0.4, 0, 3.0]) {
-                sphere(r = 1.9, $fn = 16);
-                translate([0, 0, 1.6]) sphere(r = 1.2, $fn = 14);
-            }
-        }
-    }
+module trail() {
+    flat_base(-100, 132, 46);
+    on_base( 86.0, 0, -12, 1.0) dharma_dog();
+    on_base( 41.0) yudhishthira();
+    on_base( 16.5) bhima();
+    on_base( -8.0) arjuna();
+    on_base(-32.5) nakula();
+    on_base(-57.0) sahadeva();
+    on_base(-81.5) draupadi();
 }
 
-// ====================================================================
-// 3. BHIMA (Mighty Warrior Vrikodara)
-// Photo Match:
-//   - Massive muscular frame, colossal bare arms
-//   - Long flowing golden hair swept back over shoulders
-//   - Orange cowl/scarf around collar
-//   - Saffron diagonal sash crossing muscular chest
-//   - Left arm muscular and bent with hand on hip/thigh
-// ====================================================================
-module detailed_bhima() {
-    union() {
-        // Feet
-        for (sy = [-3.8, 3.8]) {
-            hull() {
-                translate([0.5, sy, 0.0]) cylinder(r = 2.2, h = 1.4, $fn = 14);
-                translate([3.4, sy, 0.4]) scale([1.5, 1.1, 0.7]) sphere(r = 1.8, $fn = 12);
-            }
-        }
-
-        // Muscular Legs & Warrior Dhoti
-        for (sy = [-3.8, 3.8]) {
-            hull() {
-                translate([0.5, sy, 1.2]) cylinder(r1 = 2.6, r2 = 3.0, h = 9.5, $fn = 16);
-                translate([0.8, sy, 10.7]) sphere(r = 3.0, $fn = 16); // Knee cap
-            }
-            hull() {
-                translate([0.8, sy, 10.7]) sphere(r = 3.0, $fn = 16);
-                translate([0.2, sy * 0.8, 19.5]) cylinder(r1 = 3.2, r2 = 3.9, h = 5.0, $fn = 18);
-            }
-        }
-        hull() {
-            translate([0.5, -2.4, 2.5]) cube([2.0, 4.8, 17.0]);
-            translate([2.4, -1.6, 3.5]) cube([1.5, 3.2, 15.0]);
-        }
-
-        // Muscular Torso (V-taper)
-        hull() {
-            translate([0, 0, 20.0]) scale([0.9, 1.25, 1.0]) cylinder(r1 = 4.6, r2 = 5.6, h = 6.0, $fn = 24);
-        }
-        hull() {
-            translate([0, 0, 26.0]) scale([1.0, 1.4, 1.0]) cylinder(r1 = 5.6, r2 = 6.8, h = 6.5, $fn = 24);
-        }
-
-        // Chiseled Pectoral Muscles
-        for (sy = [-2.8, 2.8]) {
-            translate([3.8, sy, 29.5]) scale([1.0, 1.2, 0.9]) sphere(r = 2.5, $fn = 16);
-        }
-
-        // Orange Scarf / Cowl around neck (From photo!)
-        translate([1.0, 0, 32.0]) {
-            rotate([0, 25, 0]) {
-                difference() {
-                    cylinder(r1 = 6.2, r2 = 5.6, h = 3.0, center = true, $fn = 24);
-                    cylinder(r = 4.2, h = 4.0, center = true, $fn = 20);
-                }
-            }
-        }
-
-        // Saffron Chest Sash crossing chest diagonally (From photo!)
-        translate([1.2, 0, 27.5]) {
-            rotate([32, 42, 0]) {
-                difference() {
-                    cylinder(r1 = 7.4, r2 = 6.8, h = 2.8, center = true, $fn = 24);
-                    cylinder(r = 5.4, h = 3.8, center = true, $fn = 20);
-                }
-            }
-        }
-
-        // --- COLOSSAL BARE ARMS (From Photo!) ---
-        // Left Arm (Massive bicep, flared outward, resting on hip/thigh)
-        hull() {
-            translate([0, 7.8, 30.5]) sphere(r = 2.8, $fn = 16); // Deltoid boulder
-            translate([1.4, 8.4, 23.5]) sphere(r = 2.4, $fn = 16); // Bicep peak
-        }
-        hull() {
-            translate([1.4, 8.4, 23.5]) sphere(r = 2.4, $fn = 16); // Elbow
-            translate([2.2, 6.2, 17.5]) sphere(r = 2.0, $fn = 14); // Forearm
-            translate([2.6, 5.0, 15.0]) sphere(r = 1.8, $fn = 12); // Clenched fist
-        }
-
-        // Right Arm (Massive bicep at side)
-        hull() {
-            translate([0, -7.8, 30.5]) sphere(r = 2.8, $fn = 16);
-            translate([1.4, -8.4, 23.5]) sphere(r = 2.4, $fn = 16);
-        }
-        hull() {
-            translate([1.4, -8.4, 23.5]) sphere(r = 2.4, $fn = 16);
-            translate([2.2, -6.2, 17.5]) sphere(r = 2.0, $fn = 14);
-            translate([2.6, -5.0, 15.0]) sphere(r = 1.8, $fn = 12);
-        }
-
-        // --- HEAD WITH FLOWING WARRIOR HAIR (From Photo!) ---
-        translate([0, 0, 35.0]) cylinder(r1 = 3.8, r2 = 3.4, h = 3.5, $fn = 16);
-        translate([0.5, 0, 40.0]) {
-            sphere(r = 3.8, $fn = 20);
-            translate([2.6, 0, -0.6]) scale([1.1, 1.25, 1.1]) sphere(r = 1.8, $fn = 14); // Strong jaw
-            translate([3.4, 0, 0.4]) scale([1.3, 0.65, 0.95]) sphere(r = 1.0, $fn = 12); // Nose
-            translate([2.9, 0, 1.2]) cube([0.6, 0.4, 1.4], center = true); // Tilak on forehead!
-
-            // Long flowing hair cascading down back & over shoulders (Exact match from photo!)
-            translate([-2.6, 0, -2.8]) {
-                hull() {
-                    scale([1.1, 1.5, 1.2]) sphere(r = 3.2, $fn = 16);
-                    translate([-0.6, 0, -5.5]) scale([0.9, 1.4, 1.0]) sphere(r = 2.6, $fn = 14);
-                }
-            }
-            // Hair framing the temples
-            for (sy = [-2.8, 2.8]) {
-                translate([0.2, sy, -2.0])
-                    scale([0.8, 0.6, 1.6]) sphere(r = 1.6, $fn = 12);
-            }
-            // Warrior hair knot on crown
-            translate([0, 0, 3.8]) sphere(r = 2.0, $fn = 14);
-        }
-    }
+module single(w = 36) {
+    flat_base(-w / 2, w / 2, w);
+    children();
 }
 
-// ====================================================================
-// 4. ARJUNA (Supreme Archer Hero - Dhananjaya)
-// Photo Match: Slender athletic build, draped orange shawl,
-// flowing hair, archer stance.
-// ====================================================================
-module detailed_arjuna() {
-    union() {
-        // Feet
-        for (sy = [-3.0, 3.0]) {
-            hull() {
-                translate([0.5, sy, 0.0]) cylinder(r = 2.0, h = 1.4, $fn = 14);
-                translate([3.0, sy, 0.4]) scale([1.4, 1.0, 0.7]) sphere(r = 1.6, $fn = 12);
-            }
-        }
-        // Legs in Dhoti
-        for (sy = [-3.0, 3.0]) {
-            hull() {
-                translate([0.5, sy, 1.2]) cylinder(r1 = 2.2, r2 = 2.6, h = 9.0, $fn = 16);
-                translate([0.6, sy, 10.2]) sphere(r = 2.6, $fn = 16);
-            }
-            hull() {
-                translate([0.6, sy, 10.2]) sphere(r = 2.6, $fn = 16);
-                translate([0.2, sy * 0.8, 18.0]) cylinder(r1 = 2.8, r2 = 3.4, h = 5.0, $fn = 16);
-            }
-        }
-        hull() {
-            translate([0.6, -2.2, 2.0]) cube([1.8, 4.4, 16.0]);
-            translate([2.6, -1.4, 3.0]) cube([1.4, 3.0, 14.0]);
-        }
-
-        // Torso & Saffron Shawl
-        hull() {
-            translate([0, 0, 19.5]) scale([1.0, 1.3, 1.0]) cylinder(r1 = 4.6, r2 = 5.6, h = 7.0, $fn = 24);
-            translate([0, 0, 26.5]) scale([1.05, 1.35, 1.0]) sphere(r = 5.8, $fn = 24);
-        }
-        // Draped Shawl across chest
-        translate([1.2, 0, 24.5]) {
-            rotate([20, 32, 0]) {
-                difference() {
-                    cylinder(r1 = 6.0, r2 = 5.4, h = 3.0, center = true, $fn = 24);
-                    cylinder(r = 4.4, h = 3.8, center = true, $fn = 20);
-                }
-            }
-        }
-
-        // Arms
-        hull() {
-            translate([0, 6.6, 28.0]) sphere(r = 2.5, $fn = 16);
-            translate([1.4, 5.4, 21.0]) sphere(r = 2.0, $fn = 14);
-            translate([2.4, 4.0, 15.0]) sphere(r = 1.6, $fn = 12);
-        }
-        hull() {
-            translate([0, -6.6, 28.0]) sphere(r = 2.5, $fn = 16);
-            translate([1.4, -5.4, 21.0]) sphere(r = 2.0, $fn = 14);
-            translate([2.4, -4.0, 15.0]) sphere(r = 1.6, $fn = 12);
-        }
-
-        // Flowing hair & tiara
-        translate([0, 0, 33.0]) cylinder(r1 = 3.0, r2 = 2.6, h = 3.2, $fn = 16);
-        translate([0.5, 0, 37.5]) {
-            scale([1.05, 0.95, 1.1]) sphere(r = 3.2, $fn = 20);
-            translate([2.4, 0, 0.4]) scale([1.2, 0.7, 1.0]) sphere(r = 1.0, $fn = 12);
-            translate([2.8, 0, 1.2]) cube([0.6, 0.4, 1.2], center = true); // Tilak
-            // Flowing hair
-            translate([-1.8, 0, -1.8]) {
-                hull() {
-                    scale([1.1, 1.4, 1.2]) sphere(r = 2.4, $fn = 16);
-                    translate([-0.5, 0, -4.0]) scale([0.9, 1.3, 1.0]) sphere(r = 2.0, $fn = 14);
-                }
-            }
-            translate([-0.3, 0, 2.8]) cylinder(r1 = 2.6, r2 = 1.5, h = 3.4, $fn = 16);
-        }
-    }
-}
-
-// ====================================================================
-// 5. NAKULA & SAHADEVA
-// ====================================================================
-module detailed_nakula() {
-    detailed_arjuna();
-}
-
-module detailed_sahadeva() {
-    detailed_arjuna();
-}
-
-// ====================================================================
-// 7. DRAUPADI (Empress Panchali)
-// ====================================================================
-module detailed_draupadi() {
-    union() {
-        for (sy = [-2.2, 2.2]) {
-            hull() {
-                translate([0.5, sy, 0.0]) cylinder(r = 1.6, h = 1.4, $fn = 14);
-                translate([2.8, sy, 0.4]) scale([1.4, 0.9, 0.6]) sphere(r = 1.4, $fn = 12);
-            }
-        }
-        hull() {
-            translate([0, 0, 0.8]) cylinder(r1 = 5.8, r2 = 4.6, h = 11.5, $fn = 24);
-            translate([0, 0, 12.3]) cylinder(r1 = 4.6, r2 = 3.9, h = 7.5, $fn = 22);
-        }
-        for (i = [0:4]) {
-            translate([3.0, 0, 2.0 + i * 3.6])
-                scale([0.85, 0.45, 1.3]) cylinder(r = 1.5, h = 3.2, $fn = 12);
-        }
-        hull() {
-            translate([0, 0, 19.8]) scale([0.95, 1.15, 1.0]) cylinder(r1 = 3.9, r2 = 4.4, h = 6.5, $fn = 22);
-            translate([0, 0, 26.3]) scale([1.0, 1.2, 1.0]) sphere(r = 4.4, $fn = 22);
-        }
-        translate([0.8, 0, 24.8]) {
-            rotate([20, 30, 0])
-                cylinder(r1 = 4.8, r2 = 4.2, h = 2.6, $fn = 20);
-        }
-        hull() {
-            translate([0, 5.0, 25.5]) sphere(r = 1.8, $fn = 14);
-            translate([2.2, 1.3, 20.5]) sphere(r = 1.4, $fn = 12);
-        }
-        hull() {
-            translate([0, -5.0, 25.5]) sphere(r = 1.8, $fn = 14);
-            translate([2.2, -1.3, 20.5]) sphere(r = 1.4, $fn = 12);
-        }
-        translate([2.8, 0, 20.5])
-            scale([1.4, 0.75, 1.4]) sphere(r = 1.4, $fn = 14);
-
-        translate([0, 0, 30.0]) cylinder(r = 2.4, h = 3.0, $fn = 16);
-        translate([0.5, 0, 34.5]) {
-            sphere(r = 3.0, $fn = 20);
-            translate([2.2, 0, 0.2]) scale([1.1, 0.6, 1.0]) sphere(r = 0.9, $fn = 12);
-            translate([-1.1, 0, 0.5]) scale([1.25, 1.35, 1.2]) sphere(r = 3.0, $fn = 18);
-        }
-    }
-}
-
-// ====================================================================
-// COMPLETE SCENIC DIORAMA PROCESSION TRAIL (Direct match to photo)
-// ====================================================================
-module scenic_procession_trail() {
-    path_len = 225.0;
-    path_w = 44.0;
-
-    union() {
-        // Continuous Flat Thin Base Plinth (2.0mm thick standard)
-        hull() {
-            translate([-path_len/2 + 4, -path_w/2 + 4, 0]) cylinder(r = 4, h = base_h, $fn = 20);
-            translate([ path_len/2 - 4, -path_w/2 + 4, 0]) cylinder(r = 4, h = base_h, $fn = 20);
-            translate([ path_len/2 - 4,  path_w/2 - 4, 0]) cylinder(r = 4, h = base_h, $fn = 20);
-            translate([-path_len/2 + 4,  path_w/2 - 4, 0]) cylinder(r = 4, h = base_h, $fn = 20);
-        }
-
-        // Individual pedestal plinths along the trail (Matching photo!)
-        // 1. Dharma Dog leading at front (X = +82mm)
-        translate([82.0, 0, 0]) {
-            figure_pedestal(42, 22);
-            translate([0, 0, base_h]) detailed_dharma_dog();
-        }
-
-        // 2. Yudhishthira right behind the dog (X = +52mm)
-        translate([52.0, 0, 0]) {
-            figure_pedestal(26, 22);
-            translate([0, 0, base_h]) detailed_yudhishthira();
-        }
-
-        // 3. Bhima (Mighty warrior powerhouse) (X = +24mm)
-        translate([24.0, 0, 0]) {
-            figure_pedestal(28, 24);
-            translate([0, 0, base_h]) detailed_bhima();
-        }
-
-        // 4. Arjuna (X = -4mm)
-        translate([-4.0, 0, 0]) {
-            figure_pedestal(26, 22);
-            translate([0, 0, base_h]) detailed_arjuna();
-        }
-
-        // 5. Nakula (X = -32mm)
-        translate([-32.0, 0, 0]) {
-            figure_pedestal(26, 22);
-            translate([0, 0, base_h]) detailed_nakula();
-        }
-
-        // 6. Sahadeva (X = -60mm)
-        translate([-60.0, 0, 0]) {
-            figure_pedestal(26, 22);
-            translate([0, 0, base_h]) detailed_sahadeva();
-        }
-
-        // 7. Draupadi trailing gracefully (X = -88mm)
-        translate([-88.0, 0, 0]) {
-            figure_pedestal(24, 22);
-            translate([0, 0, base_h]) detailed_draupadi();
-        }
-    }
-}
-
-// Full Individual Kit Bed
-module all_statues_kit() {
-    translate([-50, 16, 0]) { figure_pedestal(42, 22); translate([0, 0, base_h]) detailed_dharma_dog(); }
-    translate([-16, 16, 0]) { figure_pedestal(26, 22); translate([0, 0, base_h]) detailed_yudhishthira(); }
-    translate([ 18, 16, 0]) { figure_pedestal(28, 24); translate([0, 0, base_h]) detailed_bhima(); }
-    translate([ 48, 16, 0]) { figure_pedestal(26, 22); translate([0, 0, base_h]) detailed_arjuna(); }
-
-    translate([-30, -16, 0]) { figure_pedestal(26, 22); translate([0, 0, base_h]) detailed_nakula(); }
-    translate([  0, -16, 0]) { figure_pedestal(26, 22); translate([0, 0, base_h]) detailed_sahadeva(); }
-    translate([ 30, -16, 0]) { figure_pedestal(24, 22); translate([0, 0, base_h]) detailed_draupadi(); }
-}
+// Selector
+if (char_select == "trail") trail();
+if (char_select == "dog") { flat_base(-40, 40, 40); translate([0, 0, base_h]) dharma_dog(); }
+if (char_select == "yudhishthira") single() on_base(0, 0, 0) yudhishthira();
+if (char_select == "bhima") single() on_base(0, 0, 0) bhima();
+if (char_select == "arjuna") single() on_base(0, 0, 0) arjuna();
+if (char_select == "nakula") single() on_base(0, 0, 0) nakula();
+if (char_select == "sahadeva") single() on_base(0, 0, 0) sahadeva();
+if (char_select == "draupadi") single() on_base(0, 0, 0) draupadi();
