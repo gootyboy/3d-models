@@ -687,6 +687,22 @@ module dharma_dog() {
             ell([14.8, sy * 5.0, 26.5], [1.6, 1.6, 1.6], 12);
             ell([17.2, sy * 4.6, 23.8], [1.1, 1.1, 1.1], 10);
         }
+        // Vaulted self-supporting belly arch and under-chest ruff (100% supportless FDM)
+        // 1. Vaulted arch from front legs (x=8.0) and hind legs (x=-8.5) meeting at belly apex (x=2.0)
+        hull() {
+            ell([8.0, 0, 10.5], [4.5, 3.5, 2.5], 16);
+            ell([2.0, 0, 13.5], [4.0, 2.8, 2.0], 16);
+        }
+        hull() {
+            ell([-8.5, 0, 11.5], [4.5, 3.5, 2.5], 16);
+            ell([2.0, 0, 13.5], [4.0, 2.8, 2.0], 16);
+        }
+        // 2. Chest apron / ruff between front legs sloping at 45 deg down towards paws:
+        hull() {
+            ell([9.0, 0, 14.5], [4.5, 3.5, 2.5], 16);
+            ell([9.5, 0, 8.5], [3.2, 2.2, 2.5], 16);
+            ell([10.2, 0, 3.0], [2.2, 1.4, 2.0], 14);
+        }
         // Sturdy, 100% printable alert tail with zero floating regions
         hull() {
             ell([-9.6, 0, 17.5], [3.6, 2.2, 3.2], 18);
