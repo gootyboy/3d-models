@@ -24,8 +24,8 @@ base_h = 2.0;
 // Figure scale: reduced by 20% per user request (0.85 * 0.80 = 0.68)
 fs = 0.68;
 
-// Figure rotation: -90 = facing front towards viewer (forward)
-figure_rot = -90;
+// Figure rotation: -12 = matching dog facing direction along trail
+figure_rot = -12;
 
 char_select = "trail"; // ["trail", "dog", "yudhishthira", "bhima", "arjuna", "nakula", "sahadeva", "draupadi"]
 
